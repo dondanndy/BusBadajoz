@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="2000"
+    android:exitFadeDuration="2000">
+    <item android:state_activated="true"
+        android:color="#B00020" />
+    <set>
+        <objectAnimator android:propertyName="color"
+            android:duration="1000"
+            android:valueTo="B00020"
+            android:valueType="intType"/>
+    </set>
+    <item android:state_activated="false"
+        android:color="#00000000" />
+</selector>

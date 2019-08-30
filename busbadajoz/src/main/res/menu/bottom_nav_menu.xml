@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:font = "@font/lato"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
+
+    <item
+        android:id="@+id/navigation_lineas"
+        android:font = "@font/lato"
+        android:icon="@drawable/ic_search_black"
+        android:title="@string/title_lineas" />
+
+    <item
+        android:id="@+id/navigation_ajustes"
+        android:font = "@font/lato"
+        android:icon="@drawable/ic_settings_black"
+        android:title="@string/title_ajustes" />
+
+</menu>

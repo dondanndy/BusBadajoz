@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="2000"
+    android:exitFadeDuration="2000">
+    <item android:state_pressed="true"
+        android:color="#B00020"
+        android:enterFadeDuration="@android:integer/config_longAnimTime"
+        android:exitFadeDuration="@android:integer/config_longAnimTime"/>
+    <item
+        android:color="#00B551"
+        android:enterFadeDuration="@android:integer/config_longAnimTime"
+        android:exitFadeDuration="@android:integer/config_longAnimTime"/>
+</selector>
