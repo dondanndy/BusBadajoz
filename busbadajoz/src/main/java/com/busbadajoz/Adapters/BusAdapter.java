@@ -2,7 +2,6 @@ package com.busbadajoz.Adapters;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -10,18 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.media.Image;
-import android.text.BoringLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.busbadajoz.R;
 import com.busbadajoz.models.BusModel;
+import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
 
@@ -49,15 +45,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     @Override
     public BusViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_layout, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_layout, parent, false);
         BusViewHolder singleItemRowHolder = new BusViewHolder(v);
         return singleItemRowHolder;
     }
 
     @Override
     public void onBindViewHolder(BusViewHolder holder, final int position) {
+
         holder.line_name.setText(buses.get(position).getLine());
-        holder.time_left.setText(buses.get(position).getTimeLeft());
+
+        //holder.time_left.setText(buses.get(position).getTimeLeft());
+
         holder.unit_time_left.setText("min");
 
         holder.bus.setOnClickListener(new View.OnClickListener() {
@@ -80,43 +79,21 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         // Change only the color of the tapped bus.
         if (bus_selected == position) {
             if (!bus_state.get(position)){
-                final ObjectAnimator backgroundColorAnimator = ObjectAnimator.ofObject((GradientDrawable) holder.bus.getBackground(),
-                        "color",
-                        new ArgbEvaluator(),
-                        Color.TRANSPARENT,
-                        Color.parseColor("#B00020"));
-                backgroundColorAnimator.setDuration(250);
-                backgroundColorAnimator.start();
+                changeColor((GradientDrawable) holder.bus.getBackground(), Color.TRANSPARENT,Color.parseColor("#B00020"));
 
-            final ObjectAnimator textColorAnimator = ObjectAnimator.ofObject(holder.time_left,
-                    "TextColor",
-                    new ArgbEvaluator(),
-                    Color.BLACK,
-                    Color.WHITE);
-            textColorAnimator.setDuration(250);
-            textColorAnimator.start();
+                changeColor(holder.line_name, Color.BLACK, Color.WHITE);
+                changeColor(holder.time_left, Color.BLACK, Color.WHITE);
+                changeColor(holder.unit_time_left, Color.BLACK, Color.WHITE);
+                holder.bottom_triangle.setVisibility(View.VISIBLE);
 
-            holder.bottom_triangle.setVisibility(View.VISIBLE);
-
-
-            bus_state.set(position, true);
+                bus_state.set(position, true);
 
             } else {
-                final ObjectAnimator backgroundColorAnimator = ObjectAnimator.ofObject((GradientDrawable) holder.bus.getBackground(),
-                        "color",
-                        new ArgbEvaluator(),
-                        Color.parseColor("#B00020"),
-                        Color.TRANSPARENT);
-                backgroundColorAnimator.setDuration(250);
-                backgroundColorAnimator.start();
+                changeColor((GradientDrawable) holder.bus.getBackground(), Color.parseColor("#B00020"), Color.TRANSPARENT);
 
-                final ObjectAnimator textColorAnimator = ObjectAnimator.ofObject(holder.time_left,
-                        "TextColor",
-                        new ArgbEvaluator(),
-                        Color.WHITE,
-                        Color.BLACK);
-                textColorAnimator.setDuration(250);
-                textColorAnimator.start();
+                changeColor(holder.line_name, Color.WHITE, Color.BLACK);
+                changeColor(holder.time_left, Color.WHITE, Color.BLACK);
+                changeColor(holder.unit_time_left, Color.WHITE, Color.BLACK);
 
                 bus_state.set(position, false);
                 holder.bottom_triangle.setVisibility(View.INVISIBLE);
@@ -128,11 +105,15 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         } else {
             if (bus_state.get(position)){
                 ((GradientDrawable) holder.bus.getBackground()).setColor(Color.parseColor("#B00020"));
+                holder.line_name.setTextColor(Color.WHITE);
                 holder.time_left.setTextColor(Color.WHITE);
+                holder.unit_time_left.setTextColor(Color.WHITE);
                 holder.bottom_triangle.setVisibility(View.VISIBLE);
             } else {
                 ((GradientDrawable) holder.bus.getBackground()).setColor(Color.TRANSPARENT);
+                holder.line_name.setTextColor(Color.BLACK);
                 holder.time_left.setTextColor(Color.BLACK);
+                holder.unit_time_left.setTextColor(Color.BLACK);
                 holder.bottom_triangle.setVisibility(View.INVISIBLE);
             }
         }
@@ -147,12 +128,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     public class BusViewHolder extends RecyclerView.ViewHolder {
 
-        protected TextView line_name;
-        protected TextView time_left;
-        protected TextView unit_time_left;
-        protected ConstraintLayout bottom_triangle;
+        private TextView line_name;
+        private TickerView time_left;
+        private TextView unit_time_left;
+        private ConstraintLayout bottom_triangle;
 
-        protected ConstraintLayout bus;
+        private ConstraintLayout bus;
 
         public BusViewHolder(View itemView) {
             super(itemView);
@@ -172,4 +153,16 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         void OnItemClicked(int item_id, ArrayList<Boolean> bus_states);
     }
 
+    /*
+        Function to change the color of something. It is used to set a bus layout background to red.
+     */
+    private void changeColor(Object object, int colorInit, int colorFinal) {
+        ObjectAnimator backgroundColorAnimator = ObjectAnimator.ofObject(object,
+                "color",
+                new ArgbEvaluator(),
+                colorInit,
+                colorFinal);
+        backgroundColorAnimator.setDuration(250);
+        backgroundColorAnimator.start();
+    }
 }

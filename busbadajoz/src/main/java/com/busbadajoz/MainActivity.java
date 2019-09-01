@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /* The app is going to have a botton navigation. The chosen implementation is the FragNav
-        library, which lets us control how the navigation stack behaves and contolling the scroll state
+        /*
+        The app is going to have a bottom navigation. The chosen implementation is the FragNav
+        library, which lets us control how the navigation stack behaves and controlling the scroll state
         of the fragments, a more complicated approach using Navigation from Jetpack.
          */
 

@@ -41,8 +41,8 @@ public class NearbyFragment extends Fragment {
         tickerView.setCharacterLists(TickerUtils.provideNumberList());
         tickerView.setText("7");
 
-        ExampleCounter example = new ExampleCounter();
-        example.start();
+        //ExampleCounter example = new ExampleCounter();
+        //example.start();
 
         return rootView;
     }

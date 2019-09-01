@@ -34,17 +34,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <com.robinhood.ticker.TickerView
             android:id="@+id/time_left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:fontFamily="@font/lato_black"
-            android:text="@string/time_left"
             android:textAlignment="center"
             android:textColor="@color/bus_text_colors"
             android:textSize="40sp"
             android:textStyle="bold"
+            app:ticker_defaultCharacterList="number"
+            android:text="-"
+            app:ticker_animationDuration="0"
+            android:gravity="fill_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line_name" />

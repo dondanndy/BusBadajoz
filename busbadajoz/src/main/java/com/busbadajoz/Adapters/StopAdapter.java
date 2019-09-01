@@ -1,9 +1,5 @@
 package com.busbadajoz.Adapters;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -28,7 +24,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     /*
         Here we need to save the state of every stop of the list to restore them when scrolling
-        as the adapter reuses the view setted before ignoring the previous state.
+        as the adapter reuses the view set before ignoring the previous state.
 
         For that we are going to keep a list of a state structure, restoring the stop state to
         the one
@@ -40,11 +36,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
     private ArrayList<StopModel> stop_models;
     private ArrayList<StopModelState> stop_states = new ArrayList<>();
 
-    /*
-    private Parcelable listView = null;
-
-    private ArrayList<ArrayList<Boolean>> buses_activ = new ArrayList<>();*/
-
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
 
@@ -55,24 +46,12 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
         for (int i = 0; i < this.stop_models.size(); i++ ){
             this.stop_states.add(new StopModelState(this.stop_models.get(i).getAllItemInSection().size()));
-            Log.d(TAG, "StopAdapter: Bucle de add" + i);
         }
-
-        Log.d(TAG, "StopAdapter: Size of stop_models" + this.stop_states.size());
-        /*
-        for (int i = 0; i < this.stop_models.size(); i++ ){
-            ArrayList<Boolean> tmp = new ArrayList<>();
-            for (int j = 0; j < this.stop_models.get(i).getAllItemInSection().size(); j++){
-                tmp.add(false);
-            }
-            this.buses_activ.add(tmp);
-        }*/
-
     }
 
     @Override
     public StopViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.stop_layout, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.stop_layout, parent, false);
         StopViewHolder rowHolder = new StopViewHolder(v);
         return rowHolder;
     }
@@ -99,17 +78,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 //buses_activ.set(position, buses_states);
                 row_index = position;
                 notifyItemChanged(position);
-                //listView = holder.recyclerView.getLayoutManager().onSaveInstanceState();
-
-                //Log.d(TAG, "onBindViewHolder: StateSaved: " + listView.toString());
-
-                //holder.recyclerView.scrollToPosition(position);
-                /*
-                if (holder.prueba_texto.getVisibility() == View.GONE) {
-                    holder.prueba_texto.setVisibility(View.VISIBLE);
-                } else {
-                    holder.prueba_texto.setVisibility(View.GONE);
-                }*/
             }
         };
 
@@ -123,37 +91,14 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
         if (stop_states.get(position).getScrollState() != null) {
             holder.recyclerView.getLayoutManager().onRestoreInstanceState(stop_states.get(position).getScrollState());
-            //listView = null;
         }
-        /*
-        holder.stop_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Log.d(TAG, "onClick: Layout Clicked");
-               // holder.recyclerView.scrollToPosition(3);
-            }
-        });
-
-
-        holder.name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                row_index = position;
-                //notifyItemChanged(position);
-                //Log.d(TAG, "onClick: " + position);
-            }
-        });*/
-
-        //Log.d(TAG, "onBindViewHolder: LLamada con" + row_index);
 
         if(row_index == position){
             if (!stop_states.get(position).getActive()){
-                Log.d(TAG, "onBindViewHolder: Row_index is position and is not active");
                 holder.prueba_texto.setVisibility(View.VISIBLE);
                 stop_states.get(position).setActive(true);
             } else {
-                Log.d(TAG, "onBindViewHolder: Row_index is position and is active");
-                Boolean active = false;
+                boolean active = false;
                 /*
                 if (stop_states.get(position).getBusSelected() != -1) {
                     active = true;
@@ -179,7 +124,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         }
         else
         {
-            Log.d(TAG, "onBindViewHolder: else, position: " + position);
             if (stop_states.get(position).getActive()){
                 holder.prueba_texto.setVisibility(View.VISIBLE);
             } else {
