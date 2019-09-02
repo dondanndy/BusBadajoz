@@ -3,6 +3,7 @@ package com.busbadajoz.Adapters;
 import android.content.Context;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -64,7 +65,11 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         holder.name.setText(stop_models.get(position).getName());
         holder.distance.setText("13 km");
 
+        /*
+         ----------- Buses RecyclerView Setup -----------------------------------------------
+         */
 
+        //Interface for bus tap notification.
         BusAdapter.BusAdapterInterface adapterInterface = new BusAdapter.BusAdapterInterface() {
             @Override
             public void OnItemClicked(int item_id, ArrayList<Boolean> buses_states) {
@@ -83,15 +88,32 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             }
         };
 
+        //Initial data
         ArrayList singleSectionItems = stop_models.get(position).getAllItemInSection();
         ArrayList singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();
         BusAdapter adapter = new BusAdapter(singleSectionItems, singleSectionItems_new, stop_states.get(position).getBusesStates(), mContext, adapterInterface);
 
+        //Layout and Adapter setup
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         holder.recyclerView.setAdapter(adapter);
         holder.recyclerView.setRecycledViewPool(recycledViewPool);
 
+        //Scroll state listener to save the view when the user stops scrolling.
+        RecyclerView.OnScrollListener mListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    stop_states.get(position).setScrollState(holder.recyclerView.getLayoutManager().onSaveInstanceState());
+                }
+            }
+        };
+
+        holder.recyclerView.addOnScrollListener(mListener);
+
+        //Restore of the scroll state when the view is recreated.
         if (stop_states.get(position).getScrollState() != null) {
             holder.recyclerView.getLayoutManager().onRestoreInstanceState(stop_states.get(position).getScrollState());
         }
@@ -136,8 +158,8 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
 
         if (position == stop_models.size() - 1) {
-
-            /* Bottom padding is not set in the layout, so in the last element we need to add it
+            /*
+                Bottom padding is not set in the layout, so in the last element we need to add it
                 so it's not close to the bottom menu.
              */
 

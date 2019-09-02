@@ -41,8 +41,8 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             on updates.
 
             To get that animation we have to call the setText() method of the TickerView, and I didn't
-            found another way to do that that the following (there probably is a better way, Im' sure,
-            so I'm open to suggestions):
+            find another way to do that apart from the following (there probably is a better way, I'm
+            sure, so I'm open to suggestions):
 
             If there's been an update on the times we'll call setText(), but _only_ if there's an update,
             as we are recreating this recyclerview every time a tap in any bus happens. To control this

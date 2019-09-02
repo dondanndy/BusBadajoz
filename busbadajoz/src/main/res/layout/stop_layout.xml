@@ -6,23 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:paddingLeft="20dp"
-    android:paddingTop="12dp"
-    android:paddingRight="10dp">
+    android:paddingTop="12dp">
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/lato_bold"
         android:text="@string/nombre_parada"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/bus_list"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="-3dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/distance"
@@ -32,7 +31,7 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/lato_light"
         android:text="@string/distance"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
