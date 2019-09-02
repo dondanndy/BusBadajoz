@@ -34,6 +34,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     private int row_index = -1;
     private ArrayList<StopModel> stop_models;
+    private ArrayList<StopModel> stop_models_new;
     private ArrayList<StopModelState> stop_states = new ArrayList<>();
 
     private Context mContext;
@@ -41,6 +42,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     public StopAdapter(ArrayList<StopModel> stop_models, Context mContext) {
         this.stop_models = stop_models;
+        this.stop_models_new = stop_models;
         this.mContext = mContext;
         recycledViewPool = new RecyclerView.RecycledViewPool();
 
@@ -82,7 +84,8 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         };
 
         ArrayList singleSectionItems = stop_models.get(position).getAllItemInSection();
-        BusAdapter adapter = new BusAdapter(singleSectionItems, stop_states.get(position).getBusesStates(), mContext, adapterInterface);
+        ArrayList singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();
+        BusAdapter adapter = new BusAdapter(singleSectionItems, singleSectionItems_new, stop_states.get(position).getBusesStates(), mContext, adapterInterface);
 
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
@@ -173,8 +176,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         protected TextView distance;
         protected RecyclerView recyclerView;
         protected TextView prueba_texto;
-
-        protected Parcelable listState;
         
         protected ConstraintLayout stop_layout;
 
@@ -186,6 +187,19 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.prueba_texto = itemView.findViewById(R.id.expand_test);
             this.stop_layout = itemView.findViewById(R.id.stop_layout);
         }
+    }
+
+    public void updateData(ArrayList<StopModel> buses_new, int position){
+        /*
+            This is a callback to update the data from the worker thread when the petition has been
+            made and processed. More info in the child adapter constructor.
+         */
+
+        Log.d(TAG, "updateData: called with position " + position);
+
+        this.stop_models_new = buses_new;
+        notifyItemChanged(position);
+        //this.stop_models = buses_new;
     }
 
     protected class StopModelState{
@@ -247,8 +261,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         public void setActive(Boolean active) {
             this.active = active;
         }
-
-
 
     }
 
