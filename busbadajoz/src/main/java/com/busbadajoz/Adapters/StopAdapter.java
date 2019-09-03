@@ -155,26 +155,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 holder.prueba_texto.setVisibility(View.GONE);
             }
         }
-
-
-        if (position == stop_models.size() - 1) {
-            /*
-                Bottom padding is not set in the layout, so in the last element we need to add it
-                so it's not close to the bottom menu.
-             */
-
-            //https://stackoverflow.com/a/4275969
-            int padding_in_dp = 12;
-            final float scale = mContext.getResources().getDisplayMetrics().density;
-            int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
-
-            holder.stop_layout.setPadding(
-                    holder.stop_layout.getPaddingLeft(),
-                    holder.stop_layout.getPaddingTop(),
-                    holder.stop_layout.getPaddingEnd(),
-                    padding_in_px);
-        }
-
     }
 
     @Override
