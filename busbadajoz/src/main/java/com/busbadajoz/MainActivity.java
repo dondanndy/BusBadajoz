@@ -3,8 +3,8 @@ package com.busbadajoz;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.busbadajoz.R;
 import com.busbadajoz.fragments.SavedFragment;
+import com.busbadajoz.models.data.AppData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityOptionsCompat;
@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 
 import android.os.PersistableBundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +28,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    AppData map = new AppData();
     final FragNavController fragNavController = new FragNavController(getSupportFragmentManager(), R.id.frag_container);
 
     @Override
@@ -100,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
 
+    }
+
+    public AppData giveMap(){
+        return this.map;
     }
 
     private List<Fragment> startInitialFragments(){
