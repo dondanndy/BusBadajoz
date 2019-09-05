@@ -6,27 +6,17 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.animation.PathInterpolatorCompat;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import android.graphics.Color;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
-import android.view.animation.Transformation;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.busbadajoz.R;
@@ -48,6 +38,8 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     final private String TAG = "StopAdapter";
 
+    private ArrayList<Boolean> updated = new ArrayList<>();
+
     private int row_index = -1;
     private ArrayList<StopModel> stop_models;
     private ArrayList<StopModel> stop_models_new;
@@ -64,6 +56,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
         for (int i = 0; i < this.stop_models.size(); i++ ){
             this.stop_states.add(new StopModelState(this.stop_models.get(i).getAllItemInSection().size()));
+            this.updated.add(false);
         }
     }
 
@@ -95,9 +88,11 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 if (item_id == stop_states.get(position).getBusSelected()){
                     collapse(holder.detail);
                     stop_states.get(position).setBusSelected(-1);
+                    stop_states.get(position).setShowDetail(false);
                 } else {
                     if(stop_states.get(position).getBusSelected() == -1) {
                         expand(holder.detail);
+                        stop_states.get(position).setShowDetail(true);
                     }
                     stop_states.get(position).setBusSelected(item_id);
                 }
@@ -107,13 +102,18 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         //Initial data
         ArrayList<BusModel> singleSectionItems = stop_models.get(position).getAllItemInSection();
         ArrayList<BusModel> singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();
-        BusAdapter adapter = new BusAdapter(singleSectionItems, singleSectionItems_new, stop_states.get(position).getBusesStates(), mContext, adapterInterface);
+        BusAdapter adapter = new BusAdapter(singleSectionItems, singleSectionItems_new, stop_states.get(position).getBusSelected(),
+                stop_states.get(position).getBusesStates(), mContext, adapterInterface);
 
         //Layout and Adapter setup
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         holder.recyclerView.setAdapter(adapter);
         holder.recyclerView.setRecycledViewPool(recycledViewPool);
+        if (this.updated.get(position)){
+            stop_models.set(position, stop_models_new.get(position));
+            this.updated.set(position, false);
+        }
 
         //Scroll state listener to save the view when the user stops scrolling.
         RecyclerView.OnScrollListener mListener = new RecyclerView.OnScrollListener() {
@@ -134,42 +134,10 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             holder.recyclerView.getLayoutManager().onRestoreInstanceState(stop_states.get(position).getScrollState());
         }
 
-        if(row_index == position){
-            if (!stop_states.get(position).getActive()){
-                holder.detail.setVisibility(View.VISIBLE);
-                stop_states.get(position).setActive(true);
-            } else {
-                boolean active = false;
-                /*
-                if (stop_states.get(position).getBusSelected() != -1) {
-                    active = true;
-                }*/
-
-                for (Boolean bus :  stop_states.get(position).getBusesStates()) {
-                    if (bus) {
-                        active = true;
-                        break;
-                    }
-                }
-
-                if (!active) {
-                    holder.detail.setVisibility(View.GONE);
-                    stop_states.get(position).setActive(false);
-                } else {
-                    holder.detail.setVisibility(View.VISIBLE);
-                    stop_states.get(position).setActive(true);
-                }
-            }
-            row_index = -1;
-
-        }
-        else
-        {
-            if (stop_states.get(position).getActive()){
-                holder.detail.setVisibility(View.VISIBLE);
-            } else {
-                holder.detail.setVisibility(View.GONE);
-            }
+        if (stop_states.get(position).getShowDetail()){
+            holder.detail.setVisibility(View.VISIBLE);
+        } else {
+            holder.detail.setVisibility(View.GONE);
         }
     }
 
@@ -216,8 +184,10 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         Log.d(TAG, "updateData: called with position " + position);
 
         this.stop_models_new = buses_new;
-        notifyItemChanged(position);
-        //this.stop_models = buses_new;
+        for (boolean tmp : this.updated){
+            tmp = true;
+        }
+        notifyDataSetChanged();
     }
 
     protected class StopModelState{
@@ -236,12 +206,12 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         private ArrayList<Boolean> buses_states = new ArrayList<>();
         private int bus_selected;
         private Parcelable scroll_state;
-        private Boolean active;
+        private Boolean showDetail;
 
         private StopModelState(int bus_number){
             this.bus_selected = -1;
             this.scroll_state = null;
-            this.active = false;
+            this.showDetail = false;
 
             for (int i=0; i < bus_number; i++){
                 this.buses_states.add(false);
@@ -272,12 +242,12 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.scroll_state = state;
         }
 
-        public Boolean getActive(){
-            return this.active;
+        public Boolean getShowDetail(){
+            return this.showDetail;
         }
 
-        public void setActive(Boolean active) {
-            this.active = active;
+        public void setShowDetail(Boolean show_detail) {
+            this.showDetail = show_detail;
         }
 
     }

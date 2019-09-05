@@ -26,7 +26,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private String TAG = "BUSAdapter";
 
     private int bus_tapped = -1;
-    private int bus_selected = -1;
+    private int bus_selected;
     private ArrayList<BusModel> buses;
     private ArrayList<BusModel> buses_new;
     private ArrayList<Boolean> bus_state;
@@ -34,7 +34,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     private BusAdapterInterface adapterInterface;
 
-    public BusAdapter(ArrayList<BusModel> buses, ArrayList<BusModel> buses_new, ArrayList<Boolean> bus_states, Context mContext, BusAdapterInterface adapterInterface) {
+    public BusAdapter(ArrayList<BusModel> buses, ArrayList<BusModel> buses_new, int bus_selected, ArrayList<Boolean> bus_states, Context mContext, BusAdapterInterface adapterInterface) {
         /*
             Ok, if you made it here there is something to explain. There are two arrays in the constructor,
             that will be later checked if equals to set the text. This happens because we are using
@@ -55,11 +55,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
          */
 
         Log.d(TAG, "BusAdapter: created, at 0,0 there's " + buses_new.get(0).getTimeLeft());
+        this.bus_selected = bus_selected;
         this.buses = buses;
         this.buses_new = buses_new;
         this.mContext = mContext;
-
-        //this.bus_selected = selected;
 
         this.bus_state = bus_states;
 
@@ -118,37 +117,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             }
         });
 
-        Log.d(TAG, "onBindViewHolder: Bus selected = " + bus_selected);
-        Log.d(TAG, "onBindViewHolder: Bus tapped = " + bus_tapped);
-
-
         // Change only the color of the tapped bus.
         if (bus_selected == position) {
             holder.bottom_triangle.setVisibility(View.VISIBLE);
         } else {
             holder.bottom_triangle.setVisibility(View.INVISIBLE);
         }
-
-        /*
-        if (bus_selected == position) {
-            if (!bus_state.get(position)){
-                bus_state.set(position, true);
-                holder.bottom_triangle.setVisibility(View.VISIBLE);
-            } else {
-                bus_state.set(position, false);
-                holder.bottom_triangle.setVisibility(View.INVISIBLE);
-            }
-            //bus_selected = -1;
-
-            adapterInterface.OnItemClicked(position, bus_state);
-        } else {
-            if (bus_state.get(position)){
-                holder.bottom_triangle.setVisibility(View.VISIBLE);
-            } else {
-                removeBusWarning(holder);
-                holder.bottom_triangle.setVisibility(View.INVISIBLE);
-            }
-        }*/
     }
 
     private void setBusWarning(BusViewHolder holder){

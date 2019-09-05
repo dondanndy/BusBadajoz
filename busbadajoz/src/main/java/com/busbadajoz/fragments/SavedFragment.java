@@ -36,6 +36,8 @@ public class SavedFragment extends Fragment {
     "saved", and always see them quickly when they open the app. This fragment shows them.
      */
 
+    volatile boolean stop = false;
+
     HashMap<String, StopMapModel> map;
     private RecyclerView saved_stops_recyclerview;
 
@@ -57,6 +59,12 @@ public class SavedFragment extends Fragment {
         //createDummyData();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.stop = false;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,35 +82,10 @@ public class SavedFragment extends Fragment {
         // Removes blinks
         //((SimpleItemAnimator) saved_stops_recyclerview.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        //ExampleCounter example = new ExampleCounter();
-        //example.start();
+        ExampleCounter example = new ExampleCounter();
+        example.start();
 
         return rootView;
-    }
-
-    private ArrayList<StopModel> createDummyData(int n) {
-
-        /*
-            For the time being, and just for debugging until the logic to get the data gets implemented
-         */
-        ArrayList<StopModel> paradas_random;
-
-
-        //Log.d(TAG, "createDummyData called with " + n);
-        paradas_random = new ArrayList<>();
-
-        for (int i = 1; i <= 15; i++) {
-            StopModel stop = new StopModel();
-            stop.setName("Parada " + i);
-            ArrayList<BusModel> buses = new ArrayList<>();
-            for (int j = 1; j <= 6; j++) {
-                buses.add(new BusModel("Linea " + j, "" + (n * j)));
-            }
-            stop.setAllItemInSection(buses);
-            paradas_random.add(stop);
-        }
-
-        return paradas_random;
     }
 
     private ArrayList<StopModel> extractTestData() {
@@ -125,7 +108,7 @@ public class SavedFragment extends Fragment {
 
             ArrayList<BusModel> buses = new ArrayList<>();
             for (String[] bus : stop_model.getStopBuses()) {
-                buses.add(new BusModel("Línea " + bus[0], String.valueOf((int) (Math.random() * 10))));
+                buses.add(new BusModel("Línea " + bus[0], String.valueOf((int) (Math.random() * 10) + 5)));
             }
             stop.setAllItemInSection(buses);
             paradas_random.add(stop);
@@ -134,24 +117,30 @@ public class SavedFragment extends Fragment {
         return paradas_random;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        stop = true;
+        Log.d(TAG, "onDestroy: Called");
+    }
+
     public class ExampleCounter extends Thread {
         @Override
         public void run() {
             Handler threadHandler = new Handler(Looper.getMainLooper());
-            try {
-                Thread.sleep(6000);
-                threadHandler.post(new Runnable() {
-                                       @Override
-                                       public void run() {
-                                               if (saved_stops_recyclerview.getAdapter() == null) {
-                                                   Log.d(TAG, "run: adapter null");
-                                               }
-                                               ((StopAdapter) saved_stops_recyclerview.getAdapter()).updateData(createDummyData(3), 0);
+            while(!stop) {
+                try {
+                    Thread.sleep(6000);
+                    threadHandler.post(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               ((StopAdapter) saved_stops_recyclerview.getAdapter()).updateData(extractTestData(), 0);
+                                           }
                                        }
-                                   }
-                );
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                    );
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
