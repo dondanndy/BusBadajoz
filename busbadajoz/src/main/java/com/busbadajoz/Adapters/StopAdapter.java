@@ -11,6 +11,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.graphics.Color;
 import android.os.Parcelable;
@@ -90,20 +91,16 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 stop_states.get(position).setBusesStates(buses_states);
                 stop_states.get(position).setScrollState(holder.recyclerView.getLayoutManager().onSaveInstanceState());
 
-                if (item_id == stop_states.get(position).getBusSelected()) {
+                row_index = position;
+                if (item_id == stop_states.get(position).getBusSelected()){
+                    collapse(holder.detail);
                     stop_states.get(position).setBusSelected(-1);
                 } else {
+                    if(stop_states.get(position).getBusSelected() == -1) {
+                        expand(holder.detail);
+                    }
                     stop_states.get(position).setBusSelected(item_id);
                 }
-
-                //buses_activ.set(position, buses_states);
-                row_index = position;
-                if (!stop_states.get(position).getActive()){
-                    expand(holder.detail);
-                } else {
-                    collapse(holder.detail);
-                }
-                stop_states.get(position).setActive(!stop_states.get(position).getActive());
             }
         };
 

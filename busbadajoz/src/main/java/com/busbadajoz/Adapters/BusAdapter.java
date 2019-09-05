@@ -25,6 +25,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     private String TAG = "BUSAdapter";
 
+    private int bus_tapped = -1;
     private int bus_selected = -1;
     private ArrayList<BusModel> buses;
     private ArrayList<BusModel> buses_new;
@@ -102,27 +103,38 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         holder.bus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bus_selected = position;
-                for (int i = 0; i < bus_state.size(); i++){
-                    if (bus_state.get(i) && i != position) {
-                        bus_state.set(i,false);
-                        notifyItemChanged(i);
-                        break;
-                    }
+                adapterInterface.OnItemClicked(position, bus_state);
+
+                if (bus_selected == position){
+                    bus_selected = -1;
+                    notifyItemChanged(position);
+                } else {
+                    bus_tapped = bus_selected;
+
+                    bus_selected = position;
+                    notifyItemChanged(position);
+                    notifyItemChanged(bus_tapped);
                 }
-                notifyItemChanged(position);
             }
         });
+
+        Log.d(TAG, "onBindViewHolder: Bus selected = " + bus_selected);
+        Log.d(TAG, "onBindViewHolder: Bus tapped = " + bus_tapped);
 
 
         // Change only the color of the tapped bus.
         if (bus_selected == position) {
+            holder.bottom_triangle.setVisibility(View.VISIBLE);
+        } else {
+            holder.bottom_triangle.setVisibility(View.INVISIBLE);
+        }
+
+        /*
+        if (bus_selected == position) {
             if (!bus_state.get(position)){
-                setBusWarning(holder);
                 bus_state.set(position, true);
                 holder.bottom_triangle.setVisibility(View.VISIBLE);
             } else {
-                removeBusWarning(holder);
                 bus_state.set(position, false);
                 holder.bottom_triangle.setVisibility(View.INVISIBLE);
             }
@@ -131,13 +143,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             adapterInterface.OnItemClicked(position, bus_state);
         } else {
             if (bus_state.get(position)){
-                setBusWarning(holder);
                 holder.bottom_triangle.setVisibility(View.VISIBLE);
             } else {
                 removeBusWarning(holder);
                 holder.bottom_triangle.setVisibility(View.INVISIBLE);
             }
-        }
+        }*/
     }
 
     private void setBusWarning(BusViewHolder holder){
