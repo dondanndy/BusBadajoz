@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -69,6 +70,9 @@ public class SavedFragment extends Fragment {
 
         StopAdapter adapter = new StopAdapter(extractTestData(), getContext());
         saved_stops_recyclerview.setAdapter(adapter);
+
+        // Removes blinks
+        //((SimpleItemAnimator) saved_stops_recyclerview.getItemAnimator()).setSupportsChangeAnimations(false);
 
         //ExampleCounter example = new ExampleCounter();
         //example.start();

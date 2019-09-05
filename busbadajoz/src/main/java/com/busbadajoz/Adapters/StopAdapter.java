@@ -1,8 +1,13 @@
 package com.busbadajoz.Adapters;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.animation.PathInterpolatorCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,10 +18,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.Transformation;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.busbadajoz.R;
 
+import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.StopModel;
 
 import java.util.ArrayList;
@@ -84,13 +98,18 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
                 //buses_activ.set(position, buses_states);
                 row_index = position;
-                notifyItemChanged(position);
+                if (!stop_states.get(position).getActive()){
+                    expand(holder.detail);
+                } else {
+                    collapse(holder.detail);
+                }
+                stop_states.get(position).setActive(!stop_states.get(position).getActive());
             }
         };
 
         //Initial data
-        ArrayList singleSectionItems = stop_models.get(position).getAllItemInSection();
-        ArrayList singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();
+        ArrayList<BusModel> singleSectionItems = stop_models.get(position).getAllItemInSection();
+        ArrayList<BusModel> singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();
         BusAdapter adapter = new BusAdapter(singleSectionItems, singleSectionItems_new, stop_states.get(position).getBusesStates(), mContext, adapterInterface);
 
         //Layout and Adapter setup
@@ -102,7 +121,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         //Scroll state listener to save the view when the user stops scrolling.
         RecyclerView.OnScrollListener mListener = new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -120,7 +139,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
         if(row_index == position){
             if (!stop_states.get(position).getActive()){
-                holder.prueba_texto.setVisibility(View.VISIBLE);
+                holder.detail.setVisibility(View.VISIBLE);
                 stop_states.get(position).setActive(true);
             } else {
                 boolean active = false;
@@ -137,10 +156,10 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 }
 
                 if (!active) {
-                    holder.prueba_texto.setVisibility(View.GONE);
+                    holder.detail.setVisibility(View.GONE);
                     stop_states.get(position).setActive(false);
                 } else {
-                    holder.prueba_texto.setVisibility(View.VISIBLE);
+                    holder.detail.setVisibility(View.VISIBLE);
                     stop_states.get(position).setActive(true);
                 }
             }
@@ -150,9 +169,9 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         else
         {
             if (stop_states.get(position).getActive()){
-                holder.prueba_texto.setVisibility(View.VISIBLE);
+                holder.detail.setVisibility(View.VISIBLE);
             } else {
-                holder.prueba_texto.setVisibility(View.GONE);
+                holder.detail.setVisibility(View.GONE);
             }
         }
     }
@@ -177,7 +196,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         protected TextView name;
         protected TextView distance;
         protected RecyclerView recyclerView;
-        protected TextView prueba_texto;
+        protected LinearLayout detail;
         
         protected ConstraintLayout stop_layout;
 
@@ -186,7 +205,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.name = itemView.findViewById(R.id.name);
             this.recyclerView = itemView.findViewById(R.id.bus_list);
             this.distance = itemView.findViewById(R.id.distance);
-            this.prueba_texto = itemView.findViewById(R.id.expand_test);
+            this.detail = itemView.findViewById(R.id.expand_test);
             this.stop_layout = itemView.findViewById(R.id.stop_layout);
         }
     }
@@ -211,7 +230,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             the color of its background.
 
             Also saves if one of them has been selected and its position, to display a descriptive
-            text behind the list.
+            text below the list.
 
             And lastly, it saves the LayoutManager state to keep the scrolling state in the buses
             recyclerview.
@@ -266,4 +285,64 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     }
 
+    /*
+        Both next functions are responsible for the dropdown of the detail Layout.
+
+        From https://stackoverflow.com/a/50222157
+     */
+
+    public static void expand(final View v) {
+        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+
+        ValueAnimator va = ValueAnimator.ofInt(1, targetHeight);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                v.getLayoutParams().height = (Integer) animation.getAnimatedValue();
+                v.requestLayout();
+            }
+        });
+        va.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            }
+
+            @Override public void onAnimationStart(Animator animation) {}
+            @Override public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+        });
+        va.setDuration(300);
+        va.setInterpolator(new OvershootInterpolator());
+        va.start();
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        ValueAnimator va = ValueAnimator.ofInt(initialHeight, 0);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                v.getLayoutParams().height = (Integer) animation.getAnimatedValue();
+                v.requestLayout();
+            }
+        });
+        va.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                v.setVisibility(View.GONE);
+            }
+
+            @Override public void onAnimationStart(Animator animation) {}
+            @Override public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+        });
+        va.setDuration(300);
+        va.setInterpolator(new DecelerateInterpolator());
+        va.start();
+    }
 }

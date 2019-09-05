@@ -16,8 +16,7 @@ import java.util.HashMap;
  */
 
 public class AppData {
-
-    private HashMap<String, String> first_stops = new HashMap<>();
+    private HashMap<String, String[]> first_stops = new HashMap<>();
 
     private HashMap<String, StopMapModel> stop_maps;
 
@@ -31,39 +30,39 @@ public class AppData {
         return this.stop_maps;
     }
 
-    private void fill_first_map(HashMap<String, String> map){
-        map.put("2", "200");
-        map.put("3", "143");
-        map.put("4", "141");
-        map.put("5", "100");
-        map.put("5N", "219");
-        map.put("6", "1817");
-        map.put("6N", "26");
-        map.put("7", "113");
-        map.put("7N", "100");
-        map.put("9", "136");
-        map.put("9N", "200");
-        map.put("11", "150");
-        map.put("12", "115");
-        map.put("13", "150");
-        map.put("18", "230");
-        map.put("18N", "230");
-        map.put("CM", "211");
-        map.put("CA", "205");
-        map.put("C1", "71");
-        map.put("C2", "70");
-        map.put("S1", "202");
-        map.put("S2", "211");
-        map.put("21", "9");
-        map.put("M1", "101");
-        map.put("M3", "1749");
-        map.put("M4", "248");
+    private void fill_first_map(HashMap<String, String[]> map){
+        map.put("2", new String[]{"200", "7"});
+        map.put("3", new String[]{"143", "71"});
+        map.put("4", new String[]{"141", "176"});
+        map.put("5", new String[]{"100", "186"});
+        map.put("5N", new String[]{"219", "100"});
+        map.put("6", new String[]{"1817", "1760"});
+        map.put("6N", new String[]{"26", "131"});
+        map.put("7", new String[]{"113", "91"});
+        map.put("7N", new String[]{"100", "174"});
+        map.put("9", new String[]{"136", "71"});
+        map.put("9N", new String[]{"200", "77"});
+        map.put("11", new String[]{"150", "1780"});
+        map.put("12", new String[]{"115", "1782"});
+        map.put("13", new String[]{"150", "1766"});
+        map.put("18", new String[]{"230", "71"});
+        map.put("18N", new String[]{"230", "113"});
+        map.put("CM", new String[]{"211", "1790"});
+        map.put("CA", new String[]{"205", "235"});
+        map.put("C1", new String[]{"71", "187"});
+        map.put("C2", new String[]{"70", "188"});
+        map.put("S1", new String[]{"202", "1787"});
+        map.put("S2", new String[]{"211", "191"});
+        map.put("21", new String[]{"9", "174"});
+        map.put("M1", new String[]{"101", "29"});
+        map.put("M3", new String[]{"1749", "1747"});
+        map.put("M4", new String[]{"248", "1814"});
     }
 
     private void fill_stops_map(HashMap<String, StopMapModel> map){
         /*
             In this method we fill the map with the data we have obtained previously in the company
-            website. Maybe it's not the most efficient way but it's still fast enought even in older
+            website. Maybe it's not the most efficient way but it's still fast enough even in older
             phones (always <0.1sec in my testing).
          */
         StopMapModel stop = new StopMapModel("Lady Smith  23", new String [][]{{"18", "234", "1"},{"12", "234", "2"},{"18N", "234", "1"}}, new float[]{(float) 38.889041, (float) -6.900652});
@@ -507,7 +506,7 @@ public class AppData {
         stop = new StopMapModel("Av. Sinforiano Madroñero  21", new String [][]{{"5", "97", "2"},{"C1", "116", "1"},{"12", "116", "1"},{"5N", "97", "1"},{"6N", "116", "1"}}, new float[]{(float) 38.868160, (float) -6.987424});
         map.put("115", stop);
 
-        stop = new StopMapModel("C/ Godofredo Ortega Y Munoz  31", new String [][]{{"5", "98", "2"},{"M1", "98", "2"},{"5N", "98", "1"}}, new float[]{(float) 38.865521, (float) -6.987978});
+        stop = new StopMapModel("C/ Godofredo Ortega Y Muñoz  31", new String [][]{{"5", "98", "2"},{"M1", "98", "2"},{"5N", "98", "1"}}, new float[]{(float) 38.865521, (float) -6.987978});
         map.put("97", stop);
 
         stop = new StopMapModel("C/ Arturo Barea  7", new String [][]{{"5", "99", "2"},{"M1", "99", "2"},{"5N", "99", "1"}}, new float[]{(float) 38.863119, (float) -6.986146});
@@ -555,7 +554,7 @@ public class AppData {
         stop = new StopMapModel("Av. de Adolfo Suárez", new String [][]{{"6", "14", "1"},{"C1", "20", "2"},{"11", "14", "1"},{"13", "14", "1"}}, new float[]{(float) 38.885997, (float) -6.974531});
         map.put("1748", stop);
 
-        stop = new StopMapModel("C/ Ntra. Sra. de Bótoa 1A", new String [][]{{"6", "20", "1"},{"11", "15", "1"},{"13", "15", "1"}}, new float[]{(float) 38.895065, (float) -6.969890});
+        stop = new StopMapModel("C/ Nuestra Señora de Bótoa 1A", new String [][]{{"6", "20", "1"},{"11", "15", "1"},{"13", "15", "1"}}, new float[]{(float) 38.895065, (float) -6.969890});
         map.put("14", stop);
 
         stop = new StopMapModel("Camino Sta. Engracia  8", new String [][]{{"6", "12", "1"},{"C1", "12", "2"}}, new float[]{(float) 38.891495, (float) -6.972089});
@@ -618,10 +617,10 @@ public class AppData {
         stop = new StopMapModel("C/ Segovia", new String [][]{{"7", "1756", "1"}}, new float[]{(float) 38.865991, (float) -6.996250});
         map.put("93", stop);
 
-        stop = new StopMapModel("C/.José Miguel Sánchez Hueso  57", new String [][]{{"7", "91", "1"}}, new float[]{(float) 38.863044, (float) -7.003967});
+        stop = new StopMapModel("C/José Miguel Sánchez Hueso  57", new String [][]{{"7", "91", "1"}}, new float[]{(float) 38.863044, (float) -7.003967});
         map.put("1756", stop);
 
-        stop = new StopMapModel("C/.José Miguel Sánchez Hueso", new String [][]{{"7", "183", "2"}}, new float[]{(float) 38.862353, (float) -7.004454});
+        stop = new StopMapModel("C/José Miguel Sánchez Hueso", new String [][]{{"7", "183", "2"}}, new float[]{(float) 38.862353, (float) -7.004454});
         map.put("91", stop);
 
         stop = new StopMapModel("C/ Segovia", new String [][]{{"7", "1756", "1"}}, new float[]{(float) 38.865792, (float) -6.996185});
@@ -675,13 +674,13 @@ public class AppData {
         stop = new StopMapModel("Av. de Las Vaguadas  31", new String [][]{{"9", "135", "2"}}, new float[]{(float) 38.844604, (float) -6.977765});
         map.put("134", stop);
 
-        stop = new StopMapModel("C/. Parque de Las Cañadas", new String [][]{{"9", "-1", "-1"}}, new float[]{(float) 38.849204, (float) -6.978441});
+        stop = new StopMapModel("C/ Parque de Las Cañadas", new String [][]{{"9", "-1", "-1"}}, new float[]{(float) 38.849204, (float) -6.978441});
         map.put("135", stop);
 
         stop = new StopMapModel("Av. de Elvas  8", new String [][]{{"", "-1", "-1"}}, new float[]{(float) 38.882039, (float) -7.007443});
         map.put("1789", stop);
 
-        stop = new StopMapModel("Av. del Parque Cientifico Y Tecnológico", new String [][]{{"C1", "-1", "-1"}}, new float[]{(float) 38.887858, (float) -6.999824});
+        stop = new StopMapModel("Av. del Parque Científico Y Tecnológico", new String [][]{{"C1", "-1", "-1"}}, new float[]{(float) 38.887858, (float) -6.999824});
         map.put("34", stop);
 
         stop = new StopMapModel("Av. Javier Blanco Palenciano", new String [][]{{"C2", "1758", "1"}}, new float[]{(float) 38.886487, (float) -7.000291});
@@ -690,13 +689,13 @@ public class AppData {
         stop = new StopMapModel("Cementerio Nuevo", new String [][]{{"CM", "138", "2"}}, new float[]{(float) 38.784264, (float) -6.994085});
         map.put("1790", stop);
 
-        stop = new StopMapModel("C/ Ntra. Sra. de Bótoa 2", new String [][]{{"11", "1768", "1"},{"13", "1768", "1"}}, new float[]{(float) 38.900002, (float) -6.968367});
+        stop = new StopMapModel("C/ Nuestra Señora de Bótoa 2", new String [][]{{"11", "1768", "1"},{"13", "1768", "1"}}, new float[]{(float) 38.900002, (float) -6.968367});
         map.put("15", stop);
 
         stop = new StopMapModel("Ctra. Cáceres", new String [][]{{"11", "1764", "1"},{"13", "1761", "1"}}, new float[]{(float) 38.917207, (float) -6.959592});
         map.put("1768", stop);
 
-        stop = new StopMapModel("C/. Afrodita 1 (Gevora)", new String [][]{{"11", "1763", "1"},{"13", "1763", "2"}}, new float[]{(float) 38.922529, (float) -6.939793});
+        stop = new StopMapModel("C/ Afrodita 1 (Gevora)", new String [][]{{"11", "1763", "1"},{"13", "1763", "2"}}, new float[]{(float) 38.922529, (float) -6.939793});
         map.put("1764", stop);
 
         stop = new StopMapModel("C/ Ns Guadalupe  7  (Gevora)", new String [][]{{"11", "1777", "1"},{"13", "1767", "2"}}, new float[]{(float) 38.919616, (float) -6.943359});
@@ -729,16 +728,16 @@ public class AppData {
         stop = new StopMapModel("Ns. Guadalupe (Gevora)", new String [][]{{"11", "1762", "2"},{"13", "1762", "1"}}, new float[]{(float) 38.919357, (float) -6.943869});
         map.put("1761", stop);
 
-        stop = new StopMapModel("C/. Afrodita 2 (Gevora)", new String [][]{{"11", "1767", "2"},{"13", "1765", "1"}}, new float[]{(float) 38.922546, (float) -6.939653});
+        stop = new StopMapModel("C/ Afrodita 2 (Gevora)", new String [][]{{"11", "1767", "2"},{"13", "1765", "1"}}, new float[]{(float) 38.922546, (float) -6.939653});
         map.put("1762", stop);
 
-        stop = new StopMapModel("Ctra. Caceres", new String [][]{{"11", "16", "2"},{"13", "16", "2"}}, new float[]{(float) 38.917504, (float) -6.959450});
+        stop = new StopMapModel("Ctra. Cáceres", new String [][]{{"11", "16", "2"},{"13", "16", "2"}}, new float[]{(float) 38.917504, (float) -6.959450});
         map.put("1767", stop);
 
-        stop = new StopMapModel("C/ Ntra. Sra. de Bótoa 1", new String [][]{{"11", "17", "2"},{"13", "17", "2"}}, new float[]{(float) 38.900022, (float) -6.968606});
+        stop = new StopMapModel("C/ Nuestra Señora de Bótoa 1", new String [][]{{"11", "17", "2"},{"13", "17", "2"}}, new float[]{(float) 38.900022, (float) -6.968606});
         map.put("16", stop);
 
-        stop = new StopMapModel("C/ Ntra. Sra. de Bótoa 2A", new String [][]{{"11", "18", "2"},{"13", "18", "2"}}, new float[]{(float) 38.895843, (float) -6.970044});
+        stop = new StopMapModel("C/ Nuestra Señora de Bótoa 2A", new String [][]{{"11", "18", "2"},{"13", "18", "2"}}, new float[]{(float) 38.895843, (float) -6.970044});
         map.put("17", stop);
 
         stop = new StopMapModel("Av. Sinforiano Madroñero  5", new String [][]{{"C1", "117", "1"},{"12", "254", "1"},{"M1", "254", "1"},{"6N", "126", "1"}}, new float[]{(float) 38.865675, (float) -6.984004});
@@ -786,10 +785,10 @@ public class AppData {
         stop = new StopMapModel("C/ Jesús Rincón Jiménez  82", new String [][]{{"12", "122", "2"},{"M1", "122", "2"}}, new float[]{(float) 38.865659, (float) -6.980760});
         map.put("256", stop);
 
-        stop = new StopMapModel("C/. Sra de Guadalupe (Valdebotoa)", new String [][]{{"13", "1766", "1"}}, new float[]{(float) 38.964439, (float) -6.924101});
+        stop = new StopMapModel("C/ Sra de Guadalupe (Valdebotoa)", new String [][]{{"13", "1766", "1"}}, new float[]{(float) 38.964439, (float) -6.924101});
         map.put("1765", stop);
 
-        stop = new StopMapModel("C/. de La Guarda (Valdebotoa)", new String [][]{{"13", "1764", "2"}}, new float[]{(float) 38.967728, (float) -6.924624});
+        stop = new StopMapModel("C/ de La Guarda (Valdebotoa)", new String [][]{{"13", "1764", "2"}}, new float[]{(float) 38.967728, (float) -6.924624});
         map.put("1766", stop);
 
         stop = new StopMapModel("Av. Santa Marina  28", new String [][]{{"13", "205", "2"}}, new float[]{(float) 38.878295, (float) -6.979961});
@@ -852,7 +851,7 @@ public class AppData {
         stop = new StopMapModel("Pza. 18 de Diciembre", new String [][]{{"CA", "197", "1"}}, new float[]{(float) 38.877700, (float) -6.964511});
         map.put("1827", stop);
 
-        stop = new StopMapModel("C Zurbaran", new String [][]{{"CA", "235", "1"}}, new float[]{(float) 38.876067, (float) -6.970589});
+        stop = new StopMapModel("C Zurbarán", new String [][]{{"CA", "235", "1"}}, new float[]{(float) 38.876067, (float) -6.970589});
         map.put("1828", stop);
 
         stop = new StopMapModel("Plaza España  11", new String [][]{{"CA", "1830", "2"}}, new float[]{(float) 38.878143, (float) -6.970556});
@@ -864,7 +863,7 @@ public class AppData {
         stop = new StopMapModel("Puerta Palmas", new String [][]{{"CA", "1832", "2"}}, new float[]{(float) 38.880189, (float) -6.975036});
         map.put("1831", stop);
 
-        stop = new StopMapModel("Juaquin Costa", new String [][]{{"CA", "1833", "2"}}, new float[]{(float) 38.881638, (float) -6.973974});
+        stop = new StopMapModel("Joaquin Costa", new String [][]{{"CA", "1833", "2"}}, new float[]{(float) 38.881638, (float) -6.973974});
         map.put("1832", stop);
 
         stop = new StopMapModel("Plz San Jose", new String [][]{{"CA", "1834", "2"}}, new float[]{(float) 38.881821, (float) -6.969044});
@@ -879,7 +878,7 @@ public class AppData {
         stop = new StopMapModel("Jose Lanot", new String [][]{{"CA", "1837", "2"}}, new float[]{(float) 38.881212, (float) -6.971598});
         map.put("1836", stop);
 
-        stop = new StopMapModel("Joaquin Costa 1", new String [][]{{"CA", "204", "2"}}, new float[]{(float) 38.882089, (float) -6.973738});
+        stop = new StopMapModel("Joaquín Costa 1", new String [][]{{"CA", "204", "2"}}, new float[]{(float) 38.882089, (float) -6.973738});
         map.put("1837", stop);
 
         stop = new StopMapModel("Av. de La Medicina", new String [][]{{"C1", "73", "1"}}, new float[]{(float) 38.885105, (float) -6.999768});
@@ -945,13 +944,13 @@ public class AppData {
         stop = new StopMapModel("Camino Sta. Engracia  7", new String [][]{{"C2", "18", "1"}}, new float[]{(float) 38.891371, (float) -6.972176});
         map.put("13", stop);
 
-        stop = new StopMapModel("Ronda Cincunvalacion Reina Sofia", new String [][]{{"C2", "165", "1"}}, new float[]{(float) 38.883717, (float) -6.971595});
+        stop = new StopMapModel("Ronda Cincunvalación Reina Sofia", new String [][]{{"C2", "165", "1"}}, new float[]{(float) 38.883717, (float) -6.971595});
         map.put("238", stop);
 
         stop = new StopMapModel("C/ Isidro Pacense  20", new String [][]{{"C2", "1750", "1"}}, new float[]{(float) 38.877403, (float) -6.955826});
         map.put("180", stop);
 
-        stop = new StopMapModel("C/. Luis Andreu Fernandez de Molina", new String [][]{{"C2", "190", "2"}}, new float[]{(float) 38.870656, (float) -6.953588});
+        stop = new StopMapModel("C/ Luis Andreu Fernandez de Molina", new String [][]{{"C2", "190", "2"}}, new float[]{(float) 38.870656, (float) -6.953588});
         map.put("188", stop);
 
         stop = new StopMapModel("C/ Campanilla  17", new String [][]{{"C2", "145", "2"}}, new float[]{(float) 38.864104, (float) -6.968576});

@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#D3CDCD</color>
     <color name="colorAccent">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="text_color">#000000</color>
+    <color name="text_color_secondary">#5C5B5B</color>
     <color name="item_not_selected">#696969</color>
     <color name="item_selected">#3B67AA</color>
 

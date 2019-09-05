@@ -10,7 +10,6 @@ public class StopModel {
     private ArrayList<BusModel> buses_on_stop;
 
     public StopModel() {
-
             }
 
     public StopModel(String name) {

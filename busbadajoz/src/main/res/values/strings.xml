@@ -13,7 +13,8 @@
     <string name="distance">13km</string>
     <string name="line_name">Linea 9</string>
     <string name="time_left">9</string>
-    <string name="units_time_left">min</string>
+    <string name="units_time_left">minuto</string>
+    <string name="units_time_left_plural">minutos</string>
     <string name="app_title">Cercanas</string>
     <string name="title_activity_settings">Settings</string>
 
@@ -31,5 +32,8 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="next_stop">Siguiente parada</string>
+    <string name="direction">Dirección</string>
+    <string name="estimate">Llegada\nestimada</string>
 
 </resources>

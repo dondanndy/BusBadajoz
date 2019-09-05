@@ -5,7 +5,8 @@
     android:id="@+id/stop_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="false"
+    android:layout_marginBottom="5dp">
 
     <TextView
         android:id="@+id/name"
@@ -16,6 +17,7 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/lato_bold"
         android:text="@string/nombre_parada"
+        android:textColor="@color/text_color"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/bus_list"
@@ -30,30 +32,114 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/lato_light"
         android:text="@string/distance"
+        android:textColor="@color/text_color_secondary"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <LinearLayout
         android:id="@+id/expand_test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray_detail"
+        android:background="@android:color/black"
         android:fontFamily="@font/lato_black"
-        android:text='"PRUEBA DE TEXTO"'
+        android:orientation="horizontal"
+        android:textColor="@color/white"
         android:textSize="30sp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/bus_list"
-        tools:layout_editor_absoluteX="8dp" />
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bus_list">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/estimate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:text="@string/estimate"
+                android:textAlignment="center"
+                android:textColor="@color/gray_detail"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/estimate_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_light"
+                android:text="00:00"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/next_stop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:padding="3dp"
+                android:text="@string/next_stop"
+                android:textColor="@color/gray_detail"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/next_stop_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:padding="3dp"
+                android:text="-"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/direction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:padding="3dp"
+                android:text="@string/direction"
+                android:textColor="@color/gray_detail"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/direction_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:padding="3dp"
+                android:text="-"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bus_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:clipToPadding="false"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@+id/name" />
 
 
