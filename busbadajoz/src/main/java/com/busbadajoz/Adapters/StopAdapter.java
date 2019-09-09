@@ -6,6 +6,10 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,12 +23,17 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.busbadajoz.Data.AppData;
 import com.busbadajoz.R;
 
 import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.StopModel;
+import com.busbadajoz.models.data.StopMapModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Observable;
 
 public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder>{
 
@@ -36,26 +45,40 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         the one
      */
 
+    private HashMap<String, StopMapModel> map = new AppData().getMap();
+
     final private String TAG = "StopAdapter";
 
     private ArrayList<Boolean> updated = new ArrayList<>();
 
+    LifecycleOwner lifecycleOwner;
+
     private int row_index = -1;
+
+    private LiveData<ArrayList<StopModel>> stop_models;
+    private MutableLiveData<ArrayList<BusModel>> stop_model = new MutableLiveData<>();
+
+    /*
     private ArrayList<StopModel> stop_models;
     private ArrayList<StopModel> stop_models_new;
+    */
     private ArrayList<StopModelState> stop_states = new ArrayList<>();
 
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
 
-    public StopAdapter(ArrayList<StopModel> stop_models, Context mContext) {
+    public StopAdapter(LiveData<ArrayList<StopModel>> stop_models, Context mContext, LifecycleOwner lifecycleOwner) {
         this.stop_models = stop_models;
-        this.stop_models_new = stop_models;
+        //this.stop_models_new = stop_models;
         this.mContext = mContext;
+        this.lifecycleOwner = lifecycleOwner;
         recycledViewPool = new RecyclerView.RecycledViewPool();
 
-        for (int i = 0; i < this.stop_models.size(); i++ ){
-            this.stop_states.add(new StopModelState(this.stop_models.get(i).getAllItemInSection().size()));
+        ArrayList<String> array = new ArrayList<String>();
+        array.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+
+        for (int i = 0; i < array.size(); i++ ){
+            this.stop_states.add(new StopModelState(this.map.get(array.get(i)).getStopBuses().length));
             this.updated.add(false);
         }
     }
@@ -70,7 +93,14 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
     @Override
     public void onBindViewHolder(final StopViewHolder holder, final int position) {
 
-        holder.name.setText(stop_models.get(position).getName());
+        stop_models.observe(this.lifecycleOwner,  new Observer<ArrayList<StopModel>>() {
+            @Override
+            public void onChanged(final ArrayList<StopModel> stop_models) {
+                stop_model.setValue(stop_models.get(position).getAllItemInSection());
+            }
+        });
+
+        holder.name.setText(stop_models.getValue().get(position).getName());
         holder.distance.setText("13 km");
 
         /*
@@ -100,20 +130,22 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         };
 
         //Initial data
+        /*
         ArrayList<BusModel> singleSectionItems = stop_models.get(position).getAllItemInSection();
-        ArrayList<BusModel> singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();
-        BusAdapter adapter = new BusAdapter(singleSectionItems, singleSectionItems_new, stop_states.get(position).getBusSelected(),
-                stop_states.get(position).getBusesStates(), mContext, adapterInterface);
+        ArrayList<BusModel> singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();*/
+        BusAdapter adapter = new BusAdapter(stop_model, stop_states.get(position).getBusSelected(),
+                stop_states.get(position).getBusesStates(), mContext, adapterInterface, this.lifecycleOwner);
 
         //Layout and Adapter setup
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         holder.recyclerView.setAdapter(adapter);
         holder.recyclerView.setRecycledViewPool(recycledViewPool);
+        /*
         if (this.updated.get(position)){
             stop_models.set(position, stop_models_new.get(position));
             this.updated.set(position, false);
-        }
+        }*/
 
         //Scroll state listener to save the view when the user stops scrolling.
         RecyclerView.OnScrollListener mListener = new RecyclerView.OnScrollListener() {
@@ -153,7 +185,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     @Override
     public int getItemCount() {
-        return (null != stop_models ? stop_models.size() : 0);
+        return (null != stop_models ? stop_models.getValue().size() : 0);
     }
 
     public class StopViewHolder extends RecyclerView.ViewHolder {
@@ -175,11 +207,12 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         }
     }
 
+    /*
     public void updateData(ArrayList<StopModel> buses_new, int position){
         /*
             This is a callback to update the data from the worker thread when the petition has been
             made and processed. More info in the child adapter constructor.
-         */
+
 
 
         Log.d(TAG, "updateData: called with position " + position);
@@ -189,7 +222,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             tmp = true;
         }
         notifyDataSetChanged();
-    }
+    }*/
 
     protected class StopModelState{
 

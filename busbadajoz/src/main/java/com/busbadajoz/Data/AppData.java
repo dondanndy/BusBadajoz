@@ -1,4 +1,4 @@
-package com.busbadajoz.models.data;
+package com.busbadajoz.Data;
 
 import com.busbadajoz.models.data.StopMapModel;
 

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.busbadajoz.fragments.SavedFragment;
-import com.busbadajoz.models.data.AppData;
+import com.busbadajoz.Data.AppData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityOptionsCompat;
