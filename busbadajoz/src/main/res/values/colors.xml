@@ -10,4 +10,5 @@
     <color name="item_selected">#3B67AA</color>
 
     <color name="gray_detail">#9C9B9B</color>
+    <color name="settings_background_light">#D1D1D1</color>
 </resources>

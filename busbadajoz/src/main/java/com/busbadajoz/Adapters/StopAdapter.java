@@ -181,6 +181,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             made and processed. More info in the child adapter constructor.
          */
 
+
         Log.d(TAG, "updateData: called with position " + position);
 
         this.stop_models_new = buses_new;

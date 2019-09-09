@@ -35,5 +35,6 @@
     <string name="next_stop">Siguiente parada</string>
     <string name="direction">Dirección</string>
     <string name="estimate">Llegada\nestimada</string>
+    <string name="settings_title">Ajustes</string>
 
 </resources>
