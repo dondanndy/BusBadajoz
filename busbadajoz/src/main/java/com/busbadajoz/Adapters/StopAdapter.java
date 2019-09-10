@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,12 +52,14 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     private ArrayList<Boolean> updated = new ArrayList<>();
 
+    ArrayList<String> array = new ArrayList<String>();
+
+
     LifecycleOwner lifecycleOwner;
 
     private int row_index = -1;
 
-    private LiveData<ArrayList<StopModel>> stop_models;
-    private MutableLiveData<ArrayList<BusModel>> stop_model = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<StopModel>> stop_models;
 
     /*
     private ArrayList<StopModel> stop_models;
@@ -67,18 +70,18 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
 
-    public StopAdapter(LiveData<ArrayList<StopModel>> stop_models, Context mContext, LifecycleOwner lifecycleOwner) {
+    public StopAdapter(MutableLiveData<ArrayList<StopModel>> stop_models, Context mContext, LifecycleOwner lifecycleOwner) {
         this.stop_models = stop_models;
         //this.stop_models_new = stop_models;
         this.mContext = mContext;
         this.lifecycleOwner = lifecycleOwner;
         recycledViewPool = new RecyclerView.RecycledViewPool();
 
-        ArrayList<String> array = new ArrayList<String>();
-        array.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+        ArrayList<StopModel> tmp = new ArrayList<>();
 
-        for (int i = 0; i < array.size(); i++ ){
-            this.stop_states.add(new StopModelState(this.map.get(array.get(i)).getStopBuses().length));
+        array.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+        for (int i = 0; i < array.size(); i++ ) {
+            this.stop_states.add(new StopModelState(this.map.get(this.array.get(i)).getStopBuses().length));
             this.updated.add(false);
         }
     }
@@ -93,14 +96,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
     @Override
     public void onBindViewHolder(final StopViewHolder holder, final int position) {
 
-        stop_models.observe(this.lifecycleOwner,  new Observer<ArrayList<StopModel>>() {
-            @Override
-            public void onChanged(final ArrayList<StopModel> stop_models) {
-                stop_model.setValue(stop_models.get(position).getAllItemInSection());
-            }
-        });
-
-        holder.name.setText(stop_models.getValue().get(position).getName());
+        holder.name.setText(this.map.get(this.array.get(position)).getStopName());
         holder.distance.setText("13 km");
 
         /*
@@ -133,8 +129,23 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         /*
         ArrayList<BusModel> singleSectionItems = stop_models.get(position).getAllItemInSection();
         ArrayList<BusModel> singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();*/
+
+        final MutableLiveData<ArrayList<BusModel>> stop_model = new MutableLiveData<>();
+
+        stop_model.setValue(stop_models.getValue().get(position).getAllItemInSection());
+
+        this.stop_models.observe(this.lifecycleOwner, new Observer<ArrayList<StopModel>>() {
+            @Override
+            public void onChanged(final ArrayList<StopModel> stop_models) {
+                Log.d(TAG, "onChanged: StopAdapter called");
+                stop_model.setValue(stop_models.get(position).getAllItemInSection());
+            }
+        });
+
+        //Log.d(TAG, "StopAdapter: Size of " + this.array.get(position) + " is " + this.map.get(this.array.get(position)).getStopBuses().length);
+
         BusAdapter adapter = new BusAdapter(stop_model, stop_states.get(position).getBusSelected(),
-                stop_states.get(position).getBusesStates(), mContext, adapterInterface, this.lifecycleOwner);
+                stop_states.get(position).getBusesStates(), this.map.get(this.array.get(position)).getStopBuses().length, mContext, adapterInterface, this.lifecycleOwner);
 
         //Layout and Adapter setup
         holder.recyclerView.setHasFixedSize(true);
@@ -185,7 +196,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     @Override
     public int getItemCount() {
-        return (null != stop_models ? stop_models.getValue().size() : 0);
+        return (null != stop_models ? stop_models.getValue().size() : 7);
     }
 
     public class StopViewHolder extends RecyclerView.ViewHolder {

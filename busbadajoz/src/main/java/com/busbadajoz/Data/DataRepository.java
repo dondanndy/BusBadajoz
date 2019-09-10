@@ -2,6 +2,8 @@ package com.busbadajoz.Data;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.system.StructPollfd;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+
 public class DataRepository {
     /*
         This class is the data repository that gets the info from the internet and feeds it to the
@@ -21,24 +24,30 @@ public class DataRepository {
      */
 
     private HashMap<String, StopMapModel> stops_map;
-    private ArrayList<String> stops_list;
+    private ArrayList<String> stops_list = new ArrayList<>();
 
-    private MutableLiveData<ArrayList<StopModel>> uiData = new MutableLiveData<ArrayList<StopModel>>();
+    public MutableLiveData<ArrayList<StopModel>> uiData = new MutableLiveData<ArrayList<StopModel>>();
 
     volatile boolean stop;
 
-    public void DataRepository(){
-        this.stops_map = new AppData().getMap();
+    public DataRepository(HashMap<String, StopMapModel> map){
+
+        this.stops_map = map;
         this.stops_list.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
-        initLoop();
+        ArrayList<StopModel> tmp = new ArrayList<>();
+        for (String item : stops_list){
+            tmp.add(this.stops_map.get(item).asStopModel());
+        }
+        this.uiData.setValue(tmp);
     }
 
     public void stopLoop(){
-        this.stop = false;
+        this.stop = true;
     }
 
     public void initLoop(){
-        this.stop = true;
+        Log.d("DATA", "initloop llamado");
+        this.stop = false;
 
         DataLoop dataLoop = new DataLoop();
         dataLoop.start();
@@ -48,14 +57,14 @@ public class DataRepository {
         this.stops_list = list;
     }
 
-    private MutableLiveData<ArrayList<StopModel>> extractTestData(ArrayList<String> list) {
+        private ArrayList<StopModel> extractTestData(ArrayList<String> list) {
 
-        /*
-            For the time being, and just for debugging until the logic to get the data gets implemented
-         */
+          /*
+                For the time being, and just for debugging until the logic to get the data gets implemented
+            */
         ArrayList<StopModel> paradas_random = new ArrayList<>();
 
-        MutableLiveData<ArrayList<StopModel>> paradas_random_live = new MutableLiveData<ArrayList<StopModel>>();
+
 
         for (String stop_test : list) {
             StopMapModel stop_model = this.stops_map.get(stop_test);
@@ -71,10 +80,8 @@ public class DataRepository {
             paradas_random.add(stop);
         }
 
-        paradas_random_live.postValue(paradas_random);
-
-        return paradas_random_live;
-    }
+        return paradas_random;
+}
 
 
     public MutableLiveData<ArrayList<StopModel>> getData(){
@@ -84,13 +91,16 @@ public class DataRepository {
     public class DataLoop extends Thread {
         @Override
         public void run() {
+            Log.d("Worker Thread", "run: Alla vamos");
+            //Looper.prepare();
             Handler threadHandler = new Handler(Looper.getMainLooper());
             while(!stop) {
                 try {
                     threadHandler.post(new Runnable() {
                                            @Override
                                            public void run() {
-                                               uiData = extractTestData(stops_list);
+                                               Log.d("Worker Thread", "run: Ojo que vienen datos");
+                                               uiData.postValue(extractTestData(stops_list));
                                            }
                                        }
 

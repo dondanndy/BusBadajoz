@@ -2,6 +2,9 @@ package com.busbadajoz.models.data;
 
 import android.util.Log;
 
+import com.busbadajoz.models.BusModel;
+import com.busbadajoz.models.StopModel;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -41,6 +44,19 @@ public class StopMapModel{
 
     public void setStopBuses(String[][] stop_buses) {
         this.stop_buses = stop_buses;
+    }
+
+    public StopModel asStopModel(){
+        StopModel tmp =  new StopModel();
+        tmp.setName(this.stop_name);
+
+        ArrayList<BusModel> tmp2 = new ArrayList();
+        for (int i=0; i < this.stop_buses.length; i++){
+            tmp2.add(new BusModel(stop_buses[i][0], "-1"));
+        }
+        tmp.setAllItemInSection(tmp2);
+
+        return tmp;
     }
 }
 /*

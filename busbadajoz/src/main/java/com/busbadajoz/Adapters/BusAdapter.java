@@ -32,6 +32,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     private int bus_tapped = -1;
     private int bus_selected;
+    private int bus_size;
     private MutableLiveData<ArrayList<BusModel>> buses;
     private MutableLiveData<BusModel> bus_live;
 
@@ -43,7 +44,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private BusAdapterInterface adapterInterface;
 
     public BusAdapter(MutableLiveData<ArrayList<BusModel>> buses, int bus_selected,
-                      ArrayList<Boolean> bus_states, Context mContext, BusAdapterInterface adapterInterface,
+                      ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface,
                       LifecycleOwner lifecycleOwner) {
         /*
             Ok, if you made it here there is something to explain. There are two arrays in the constructor,
@@ -69,10 +70,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         this.buses = buses;
         this.lifecycleOwner = lifecycleOwner;
         //this.buses_new = buses_new;
+        this.bus_size = bus_size;
         this.mContext = mContext;
 
         this.bus_state = bus_states;
-
         this.adapterInterface = adapterInterface;
     }
 
@@ -88,13 +89,15 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
         buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModel>>() {
             @Override
-            public void onChanged(final ArrayList<BusModel> buses) {
-                if (holder.time_left.getText() != buses.get(position).getTimeLeft()) {
+            public void onChanged(ArrayList<BusModel> busesData) {
+                Log.d(TAG, "onChanged: BusAdapter called");
+                if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
                     holder.time_left.setAnimationDuration(350);
-                    holder.time_left.setText(buses.get(position).getTimeLeft());
+                    holder.time_left.setText(busesData.get(position).getTimeLeft());
                     holder.time_left.setAnimationDuration(0);
+                    holder.line_name.setText(busesData.get(position).getLine());
                 }
-                holder.line_name.setText(buses.get(position).getLine());
+                holder.line_name.setText(busesData.get(position).getLine());
             }
         });
 
@@ -115,12 +118,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         } else {
             holder.time_left.setText(buses.get(position).getTimeLeft());
         }
-
+        */
         if (holder.time_left.getText().equals("1")){
             holder.unit_time_left.setText(R.string.units_time_left);
         } else {
             holder.unit_time_left.setText(R.string.units_time_left_plural);
-        }*/
+        }
 
         holder.bus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,9 +167,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount: BUSAdapter size called");
-
-        return (null != buses ? buses.getValue().size() : 0);
+        return (null != buses ? buses.getValue().size() : bus_size);
     }
 
     public class BusViewHolder extends RecyclerView.ViewHolder {

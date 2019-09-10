@@ -3,8 +3,10 @@ package com.busbadajoz;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.busbadajoz.Data.DataRepository;
 import com.busbadajoz.fragments.SavedFragment;
 import com.busbadajoz.Data.AppData;
+import com.busbadajoz.models.data.StopMapModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityOptionsCompat;
@@ -23,13 +25,16 @@ import com.busbadajoz.fragments.LinesFragment;
 import com.busbadajoz.fragments.NearbyFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    AppData map = new AppData();
+    HashMap<String, StopMapModel> map = new AppData().getMap();
     final FragNavController fragNavController = new FragNavController(getSupportFragmentManager(), R.id.frag_container);
+
+    DataRepository data = new DataRepository(map);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        data.initLoop();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -102,14 +112,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public AppData giveMap(){
+    @Override
+    protected void onPause() {
+        super.onPause();
+        data.stopLoop();
+    }
+
+    public HashMap<String, StopMapModel> giveMap(){
         return this.map;
     }
 
     private List<Fragment> startInitialFragments(){
 
         List<Fragment> fragments = new ArrayList<>(3);
-        fragments.add(SavedFragment.newInstance());
+        fragments.add(SavedFragment.newInstance(data));
         fragments.add(NearbyFragment.newInstance());
         fragments.add(LinesFragment.newInstance());
 
