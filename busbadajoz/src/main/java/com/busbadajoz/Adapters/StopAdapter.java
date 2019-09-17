@@ -28,13 +28,15 @@ import com.busbadajoz.Data.AppData;
 import com.busbadajoz.R;
 
 import com.busbadajoz.models.BusModel;
+import com.busbadajoz.models.BusModelView;
+import com.busbadajoz.models.DataViewModel;
 import com.busbadajoz.models.StopModel;
-import com.busbadajoz.models.data.StopMapModel;
+import com.busbadajoz.models.StopMapModel;
+import com.busbadajoz.models.StopModelView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Observable;
 
 public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder>{
 
@@ -46,7 +48,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         the one
      */
 
-    private HashMap<String, StopMapModel> map = new AppData().getMap();
+    //private HashMap<String, StopMapModel> map = new AppData().getMap();
 
     final private String TAG = "StopAdapter";
 
@@ -54,12 +56,15 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     ArrayList<String> array = new ArrayList<String>();
 
+    DataViewModel dataModel;
 
-    LifecycleOwner lifecycleOwner;
+    //    LifecycleOwner lifecycleOwner;
 
     private int row_index = -1;
 
-    private MutableLiveData<ArrayList<StopModel>> stop_models;
+    //private MutableLiveData<ArrayList<StopModel>> stop_models;
+
+    private LiveData<ArrayList<StopModelView>> stop_models;
 
     /*
     private ArrayList<StopModel> stop_models;
@@ -70,18 +75,21 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
 
-    public StopAdapter(MutableLiveData<ArrayList<StopModel>> stop_models, Context mContext, LifecycleOwner lifecycleOwner) {
-        this.stop_models = stop_models;
-        //this.stop_models_new = stop_models;
+    //public StopAdapter(MutableLiveData<ArrayList<StopModel>> stop_models, Context mContext, LifecycleOwner lifecycleOwner) {
+    public StopAdapter(DataViewModel dataModel, Context mContext) {
+        //this.stop_models = stop_models;
         this.mContext = mContext;
-        this.lifecycleOwner = lifecycleOwner;
+
+        this.dataModel = dataModel;
+
+        //this.lifecycleOwner = lifecycleOwner;
         recycledViewPool = new RecyclerView.RecycledViewPool();
 
-        ArrayList<StopModel> tmp = new ArrayList<>();
+        //ArrayList<StopModel> tmp = new ArrayList<>();
 
-        array.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
-        for (int i = 0; i < array.size(); i++ ) {
-            this.stop_states.add(new StopModelState(this.map.get(this.array.get(i)).getStopBuses().length));
+        //array.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+        for (int i = 0; i < dataModel.getSavedStops().getValue().size(); i++ ) {
+            this.stop_states.add(new StopModelState(this.dataModel.getStopInfo(this.array.get(i)).getBuses().size()));
             this.updated.add(false);
         }
     }
@@ -96,7 +104,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
     @Override
     public void onBindViewHolder(final StopViewHolder holder, final int position) {
 
-        holder.name.setText(this.map.get(this.array.get(position)).getStopName());
+        holder.name.setText(this.dataModel.getStopInfo(this.array.get(position)).getName());
         holder.distance.setText("13 km");
 
         /*
@@ -130,9 +138,17 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         ArrayList<BusModel> singleSectionItems = stop_models.get(position).getAllItemInSection();
         ArrayList<BusModel> singleSectionItems_new = stop_models_new.get(position).getAllItemInSection();*/
 
-        final MutableLiveData<ArrayList<BusModel>> stop_model = new MutableLiveData<>();
+        /*final MutableLiveData<ArrayList<BusModel>> stop_model = new MutableLiveData<>();
 
-        stop_model.setValue(stop_models.getValue().get(position).getAllItemInSection());
+        stop_model.setValue(stop_models.getValue().get(position).getAllItemInSection());*/
+
+        LiveData<ArrayList<BusModelView>> stop_model;
+
+        stop_model = Transformations.map(stop_models, model -> {
+           return model.get(position).getBuses();
+        });
+
+        /*
 
         this.stop_models.observe(this.lifecycleOwner, new Observer<ArrayList<StopModel>>() {
             @Override
@@ -140,12 +156,12 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 Log.d(TAG, "onChanged: StopAdapter called");
                 stop_model.setValue(stop_models.get(position).getAllItemInSection());
             }
-        });
+        });*/
 
         //Log.d(TAG, "StopAdapter: Size of " + this.array.get(position) + " is " + this.map.get(this.array.get(position)).getStopBuses().length);
 
         BusAdapter adapter = new BusAdapter(stop_model, stop_states.get(position).getBusSelected(),
-                stop_states.get(position).getBusesStates(), this.map.get(this.array.get(position)).getStopBuses().length, mContext, adapterInterface, this.lifecycleOwner);
+                stop_states.get(position).getBusesStates(), this.dataModel.getStopInfo(this.array.get(position)).getBuses().size(), mContext, adapterInterface);
 
         //Layout and Adapter setup
         holder.recyclerView.setHasFixedSize(true);

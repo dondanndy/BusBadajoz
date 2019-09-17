@@ -3,16 +3,17 @@ package com.busbadajoz;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.busbadajoz.Data.DataRepository;
 import com.busbadajoz.fragments.SavedFragment;
 import com.busbadajoz.Data.AppData;
-import com.busbadajoz.models.data.StopMapModel;
+import com.busbadajoz.models.DataViewModel;
+import com.busbadajoz.models.StopMapModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.os.PersistableBundle;
 import android.view.MenuItem;
@@ -31,10 +32,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    HashMap<String, StopMapModel> map = new AppData().getMap();
     final FragNavController fragNavController = new FragNavController(getSupportFragmentManager(), R.id.frag_container);
 
-    DataRepository data = new DataRepository(map);
+    DataViewModel dataModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +47,14 @@ public class MainActivity extends AppCompatActivity {
         of the fragments, a more complicated approach using Navigation from Jetpack.
          */
 
+        dataModel = ViewModelProviders.of(this).get(DataViewModel.class);
+
         List<Fragment> fragments = startInitialFragments();
 
         fragNavController.setRootFragments(fragments);
 
         //Fragments are hidden on switch tab to keep the scroll state.
-        fragNavController.setFragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH);
+        //fragNavController.setFragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH);
 
         fragNavController.initialize(FragNavController.TAB1, savedInstanceState);
 
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        data.initLoop();
+        dataModel.initLoop();
     }
 
     @Override
@@ -115,17 +117,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        data.stopLoop();
+        this.dataModel.stopLoop();
     }
 
-    public HashMap<String, StopMapModel> giveMap(){
-        return this.map;
-    }
 
     private List<Fragment> startInitialFragments(){
 
         List<Fragment> fragments = new ArrayList<>(3);
-        fragments.add(SavedFragment.newInstance(data));
+        fragments.add(SavedFragment.newInstance());
         fragments.add(NearbyFragment.newInstance());
         fragments.add(LinesFragment.newInstance());
 

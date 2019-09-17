@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {
@@ -33,4 +37,5 @@ dependencies {
     implementation 'com.robinhood.ticker:ticker:2.0.2'
     implementation 'com.ncapdevi:frag-nav:3.2.0'
     implementation 'me.saket:inboxrecyclerview:2.0.0-beta1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 }

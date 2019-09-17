@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.busbadajoz.R;
 import com.busbadajoz.models.BusModel;
+import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.StopModel;
 import com.robinhood.ticker.TickerView;
 
@@ -33,19 +34,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private int bus_tapped = -1;
     private int bus_selected;
     private int bus_size;
-    private MutableLiveData<ArrayList<BusModel>> buses;
+    private LiveData<ArrayList<BusModelView>> buses;
     private MutableLiveData<BusModel> bus_live;
 
-    private LifecycleOwner lifecycleOwner;
+    //private LifecycleOwner lifecycleOwner;
     //private ArrayList<BusModel> buses_new;
     private ArrayList<Boolean> bus_state;
     private Context mContext;
 
     private BusAdapterInterface adapterInterface;
 
-    public BusAdapter(MutableLiveData<ArrayList<BusModel>> buses, int bus_selected,
-                      ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface,
-                      LifecycleOwner lifecycleOwner) {
+    public BusAdapter(LiveData<ArrayList<BusModelView>> buses, int bus_selected,
+                      ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface) {
         /*
             Ok, if you made it here there is something to explain. There are two arrays in the constructor,
             that will be later checked if equals to set the text. This happens because we are using
@@ -68,7 +68,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         //Log.d(TAG, "BusAdapter: created, at 0,0 there's " + buses_new.get(0).getTimeLeft());
         this.bus_selected = bus_selected;
         this.buses = buses;
-        this.lifecycleOwner = lifecycleOwner;
+        //this.lifecycleOwner = lifecycleOwner;
         //this.buses_new = buses_new;
         this.bus_size = bus_size;
         this.mContext = mContext;
@@ -87,6 +87,23 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     @Override
     public void onBindViewHolder(final BusViewHolder holder, final int position) {
 
+        holder.time_left.setAnimationDuration(0);
+        holder.time_left.setText(String.valueOf(buses.getValue().get(position).getTimeLeft()));
+
+        holder.dataObserver = busesData -> {
+            Log.d(TAG, "onChanged: BusAdapter called");
+            if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
+                holder.time_left.setAnimationDuration(350);
+                holder.time_left.setText(String.valueOf(busesData.get(position).getTimeLeft()));
+                holder.time_left.setAnimationDuration(0);
+                holder.line_name.setText(busesData.get(position).getLineName());
+            }
+            holder.line_name.setText(busesData.get(position).getLineName());
+        };
+
+
+
+        /*
         buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModel>>() {
             @Override
             public void onChanged(ArrayList<BusModel> busesData) {
@@ -99,26 +116,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                 }
                 holder.line_name.setText(busesData.get(position).getLine());
             }
-        });
+        });*/
 
-        //holder.line_name.setText(buses.getValue().get(position).getLine());
+        holder.line_name.setText(buses.getValue().get(position).getLineName());
 
-        /*
-            We have to do this to get the ticker animation from TickerView, triggered by a setText()
-            call that we make when the update the data from the parent recyclerView.
-
-        if (!buses.get(position).getTimeLeft().equals(buses_new.get(position).getTimeLeft())){
-            holder.time_left.setAnimationDuration(350);
-            holder.time_left.setText(buses.get(position).getTimeLeft());
-            holder.time_left.setText(buses_new.get(position).getTimeLeft());
-            holder.time_left.setAnimationDuration(0);
-
-            //Once the animation happened, we update the array so it never happens again on the same value
-            buses.get(position).setTimeLeft(buses_new.get(position).getTimeLeft());
-        } else {
-            holder.time_left.setText(buses.get(position).getTimeLeft());
-        }
-        */
         if (holder.time_left.getText().equals("1")){
             holder.unit_time_left.setText(R.string.units_time_left);
         } else {
@@ -151,7 +152,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         }
     }
 
-    private void setBusWarning(BusViewHolder holder){
+    private void setBusWarning(BusViewHolder holder) {
         ((GradientDrawable) holder.bus.getBackground()).setColor(Color.parseColor("#B00020"));
         holder.line_name.setTextColor(Color.WHITE);
         holder.time_left.setTextColor(Color.WHITE);
@@ -178,6 +179,8 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         private ConstraintLayout bottom_triangle;
 
         private ConstraintLayout bus;
+
+        private Observer<ArrayList<BusModelView>> dataObserver;
 
         public BusViewHolder(View itemView) {
             super(itemView);

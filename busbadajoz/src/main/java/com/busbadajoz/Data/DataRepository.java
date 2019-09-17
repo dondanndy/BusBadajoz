@@ -2,15 +2,15 @@ package com.busbadajoz.Data;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.system.StructPollfd;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.busbadajoz.models.BusModel;
+import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.StopModel;
-import com.busbadajoz.models.data.StopMapModel;
+import com.busbadajoz.models.StopModelView;
+import com.busbadajoz.models.StopMapModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,13 +23,42 @@ public class DataRepository {
         appropriate ViewModel to show it in a fragment.
      */
 
+    private AppData appData;
     private HashMap<String, StopMapModel> stops_map;
-    private ArrayList<String> stops_list = new ArrayList<>();
+    private ArrayList<String> savedStopsList = new ArrayList<>();
 
-    public MutableLiveData<ArrayList<StopModel>> uiData = new MutableLiveData<ArrayList<StopModel>>();
+    public MutableLiveData<ArrayList<StopModelView>> savedStopsData = new MutableLiveData<ArrayList<StopModelView>>();
+    public MutableLiveData<ArrayList<StopModelView>> nearbyStopsData = new MutableLiveData<ArrayList<StopModelView>>();
 
     volatile boolean stop;
 
+    public DataRepository(){
+
+        savedStopsList.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+
+        this.stops_map = this.appData.getMap();
+        ArrayList<StopModelView> tmp = new ArrayList<>();
+        for (String item : savedStopsList){
+            tmp.add(this.stops_map.get(item).asStopModelView());
+        }
+        this.savedStopsData.setValue(tmp);
+    }
+
+    public DataRepository(ArrayList<String> stops) {
+
+        this.stops_map = this.appData.getMap();
+        this.savedStopsList = stops;
+
+        ArrayList<StopModelView> tmp = new ArrayList<>();
+        for (String item : stops) {
+            tmp.add(this.stops_map.get(item).asStopModelView());
+        }
+
+        this.savedStopsData.setValue(tmp);
+    }
+
+
+    /*
     public DataRepository(HashMap<String, StopMapModel> map){
 
         this.stops_map = map;
@@ -39,9 +68,10 @@ public class DataRepository {
             tmp.add(this.stops_map.get(item).asStopModel());
         }
         this.uiData.setValue(tmp);
-    }
+    }*/
 
     public void stopLoop(){
+        Log.d("DATA", "stoploop llamado");
         this.stop = true;
     }
 
@@ -53,54 +83,67 @@ public class DataRepository {
         dataLoop.start();
     }
 
-    public void setStopsListQuery(ArrayList<String> list){
-        this.stops_list = list;
+    public StopModelView getStopInfo(String code){
+        return stops_map.get(code).asStopModelView();
     }
 
-        private ArrayList<StopModel> extractTestData(ArrayList<String> list) {
+    public void setStopsListQuery(ArrayList<String> list){
+        this.savedStopsList = list;
+    }
 
-          /*
-                For the time being, and just for debugging until the logic to get the data gets implemented
-            */
-        ArrayList<StopModel> paradas_random = new ArrayList<>();
+    private ArrayList<StopModelView> extractTestData(ArrayList<String> list) {
+        /*
+            For the time being, and just for debugging until the logic to get the data gets implemented
+         */
+    ArrayList<StopModelView> paradas_random = new ArrayList<>();
 
+    for (String stop_test : list) {
+        StopMapModel stop_model = this.stops_map.get(stop_test);
 
+        StopModelView stop = new StopModelView(stop_model.getStopName(), 33);
+        stop.setName(stop_model.getStopName());
 
-        for (String stop_test : list) {
-            StopMapModel stop_model = this.stops_map.get(stop_test);
-
-            StopModel stop = new StopModel();
-            stop.setName(stop_model.getStopName());
-
-            ArrayList<BusModel> buses = new ArrayList<>();
-            for (String[] bus : stop_model.getStopBuses()) {
-                buses.add(new BusModel("Línea " + bus[0], String.valueOf((int) (Math.random() * 10) + 5)));
-            }
-            stop.setAllItemInSection(buses);
-            paradas_random.add(stop);
+        ArrayList<BusModelView> buses = new ArrayList<>();
+        for (String[] bus : stop_model.getStopBuses()) {
+            buses.add(new BusModelView("Línea " + bus[0],
+                    (int) (Math.random() * 10) + 5,
+                    "min",
+                    3250,
+                    "m"));
         }
+        stop.setBuses(buses);
+        paradas_random.add(stop);
+    }
 
-        return paradas_random;
+    return paradas_random;
 }
 
 
-    public MutableLiveData<ArrayList<StopModel>> getData(){
-        return uiData;
+    public MutableLiveData<ArrayList<StopModelView>> getSavedStopsData(){
+        return savedStopsData;
     }
 
     public class DataLoop extends Thread {
+        /*
+            Worker thread. In this thread we will fetch the data from the website and parse it.
+         */
         @Override
         public void run() {
             Log.d("Worker Thread", "run: Alla vamos");
             //Looper.prepare();
             Handler threadHandler = new Handler(Looper.getMainLooper());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             while(!stop) {
                 try {
                     threadHandler.post(new Runnable() {
                                            @Override
                                            public void run() {
                                                Log.d("Worker Thread", "run: Ojo que vienen datos");
-                                               uiData.postValue(extractTestData(stops_list));
+                                               savedStopsData.postValue(extractTestData(savedStopsList));
                                            }
                                        }
 
