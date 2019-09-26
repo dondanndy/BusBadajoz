@@ -1,33 +1,35 @@
 package com.busbadajoz.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.busbadajoz.MainActivity;
+import com.busbadajoz.Data.AppData;
+import com.busbadajoz.Data.DataRepository;
 import com.busbadajoz.R;
 import com.busbadajoz.models.BusModel;
+import com.busbadajoz.models.DataViewModel;
 import com.busbadajoz.models.StopModel;
 
 import com.busbadajoz.Adapters.StopAdapter;
-import com.busbadajoz.models.data.AppData;
-import com.busbadajoz.models.data.StopMapModel;
+import com.busbadajoz.models.StopMapModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Random;
 
 
 public class SavedFragment extends Fragment {
@@ -36,14 +38,44 @@ public class SavedFragment extends Fragment {
     "saved", and always see them quickly when they open the app. This fragment shows them.
      */
 
+    //private DataRepository data;
+
+    private DataViewModel dataModel;
+
+    /*MutableLiveData<ArrayList<StopModel>> models = new MutableLiveData<ArrayList<StopModel>>();
+
     volatile boolean stop = false;
 
-    HashMap<String, StopMapModel> map;
+    HashMap<String, StopMapModel> map = new AppData().getMap();*/
     private RecyclerView saved_stops_recyclerview;
 
     private static final String TAG = "SavedFragment";
+
     public SavedFragment() {
-        // Required empty public constructor
+
+        //this.data = data;
+
+
+
+        /*
+        ArrayList<StopModel> tmp = new ArrayList<>();
+
+        ArrayList<String> array = new ArrayList<String>();
+
+        array.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+        for (int i = 0; i < array.size(); i++ ){
+            StopModel tmp2 = new StopModel();
+            tmp2.setName("Linea " + this.map.get(array.get(i)).getStopName());
+            ArrayList<BusModel> tmp3 = new ArrayList<>();
+
+            for (int j = 0; j < this.map.get(array.get(i)).getStopBuses().length; j++){
+                tmp3.add(new BusModel(this.map.get(array.get(i)).getStopBuses()[j][0], "-"));
+            }
+            tmp2.setAllItemInSection(tmp3);
+            tmp.add(tmp2);
+        }
+
+        this.models.setValue(tmp);*/
     }
 
     public static SavedFragment newInstance() {
@@ -54,20 +86,31 @@ public class SavedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: called");
-        this.map = ((MainActivity) getActivity()).giveMap().getMap();
-        //createDummyData();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        this.stop = false;
+        dataModel = ViewModelProviders.of(getActivity()).get(DataViewModel.class);
+        //this.map = ((MainActivity) getActivity()).giveMap().getMap();
+        //createDummyData();
+
+        /*
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        this.dataModel.getSavedStops().observe(this, new Observer<ArrayList<StopModel>>() {
+            @Override
+            public void onChanged(ArrayList<StopModel> stopModels) {
+                Log.d(TAG, "onChanged: SavedFragment called");
+                models.setValue(stopModels);
+            }
+        });*/
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_saved, container, false);
 
         saved_stops_recyclerview = rootView.findViewById(R.id.saved_recyclerview);
@@ -76,72 +119,33 @@ public class SavedFragment extends Fragment {
 
         saved_stops_recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        StopAdapter adapter = new StopAdapter(extractTestData(), getContext());
+        StopAdapter adapter = new StopAdapter(dataModel, getContext(), this);
         saved_stops_recyclerview.setAdapter(adapter);
-
-        // Removes blinks
-        //((SimpleItemAnimator) saved_stops_recyclerview.getItemAnimator()).setSupportsChangeAnimations(false);
-
-        ExampleCounter example = new ExampleCounter();
-        example.start();
 
         return rootView;
     }
 
-    private ArrayList<StopModel> extractTestData() {
+    /*
+    public void setRecyclerView(){
 
-        /*
-            For the time being, and just for debugging until the logic to get the data gets implemented
-         */
-        ArrayList<StopModel> paradas_random;
+    }*/
 
 
-        //Log.d(TAG, "createDummyData called with " + n);
-        paradas_random = new ArrayList<>();
-        String[] stops_test = {"2", "84", "229", "240", "110", "100"};
+    @Override
+    public void onResume() {
+        super.onResume();
 
-        for (String stop_test : stops_test) {
-            StopMapModel stop_model = map.get(stop_test);
+        //this.stop = false;
 
-            StopModel stop = new StopModel();
-            stop.setName(stop_model.getStopName());
-
-            ArrayList<BusModel> buses = new ArrayList<>();
-            for (String[] bus : stop_model.getStopBuses()) {
-                buses.add(new BusModel("Línea " + bus[0], String.valueOf((int) (Math.random() * 10) + 5)));
-            }
-            stop.setAllItemInSection(buses);
-            paradas_random.add(stop);
-        }
-
-        return paradas_random;
+        //ExampleCounter example = new ExampleCounter();
+        //example.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stop = true;
+        //stop = true;
         Log.d(TAG, "onDestroy: Called");
     }
 
-    public class ExampleCounter extends Thread {
-        @Override
-        public void run() {
-            Handler threadHandler = new Handler(Looper.getMainLooper());
-            while(!stop) {
-                try {
-                    Thread.sleep(6000);
-                    threadHandler.post(new Runnable() {
-                                           @Override
-                                           public void run() {
-                                               ((StopAdapter) saved_stops_recyclerview.getAdapter()).updateData(extractTestData(), 0);
-                                           }
-                                       }
-                    );
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }

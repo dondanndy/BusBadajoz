@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.busbadajoz.fragments.SavedFragment;
-import com.busbadajoz.models.data.AppData;
+import com.busbadajoz.Data.AppData;
+import com.busbadajoz.models.DataViewModel;
+import com.busbadajoz.models.StopMapModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.os.PersistableBundle;
 import android.view.MenuItem;
@@ -23,13 +26,15 @@ import com.busbadajoz.fragments.LinesFragment;
 import com.busbadajoz.fragments.NearbyFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    AppData map = new AppData();
     final FragNavController fragNavController = new FragNavController(getSupportFragmentManager(), R.id.frag_container);
+
+    DataViewModel dataModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +47,14 @@ public class MainActivity extends AppCompatActivity {
         of the fragments, a more complicated approach using Navigation from Jetpack.
          */
 
+        dataModel = ViewModelProviders.of(this).get(DataViewModel.class);
+
         List<Fragment> fragments = startInitialFragments();
 
         fragNavController.setRootFragments(fragments);
 
         //Fragments are hidden on switch tab to keep the scroll state.
-        fragNavController.setFragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH);
+        //fragNavController.setFragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH);
 
         fragNavController.initialize(FragNavController.TAB1, savedInstanceState);
 
@@ -84,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dataModel.initLoop();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -102,9 +114,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public AppData giveMap(){
-        return this.map;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.dataModel.stopLoop();
     }
+
 
     private List<Fragment> startInitialFragments(){
 

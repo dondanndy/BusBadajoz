@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class StopModel {
     //private StopLocation Location;_
     private String name;
-    private ArrayList<BusModel> buses_on_stop;
+    private ArrayList<BusModel> busesOnStop;
 
     public StopModel() {
             }
@@ -25,10 +25,10 @@ public class StopModel {
             }
 
     public ArrayList<BusModel> getAllItemInSection() {
-        return buses_on_stop;
+        return busesOnStop;
     }
 
-    public void setAllItemInSection(ArrayList<BusModel> buses_on_stop) {
-        this.buses_on_stop = buses_on_stop;
+    public void setAllItemInSection(ArrayList<BusModel> busesOnStop) {
+        this.busesOnStop = busesOnStop;
     }
 }

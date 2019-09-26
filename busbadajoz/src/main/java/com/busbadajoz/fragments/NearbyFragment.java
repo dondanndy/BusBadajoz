@@ -2,20 +2,27 @@ package com.busbadajoz.fragments;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
 
 import com.busbadajoz.R;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
+import com.busbadajoz.models.DataViewModel;
+
 public class NearbyFragment extends Fragment {
 
     TickerView tickerView;
+
+    //DataViewModel viewModel;
 
     public NearbyFragment() {
         // Required empty public constructor
@@ -29,6 +36,8 @@ public class NearbyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //viewModel = ViewModelProviders.of(this).get(DataViewModel.class);
     }
 
     @Override
@@ -39,7 +48,18 @@ public class NearbyFragment extends Fragment {
 
         tickerView = rootView.findViewById(R.id.tickerView);
         tickerView.setCharacterLists(TickerUtils.provideNumberList());
-        tickerView.setText("7");
+        //tickerView.setText(String.valueOf(viewModel.getCont()));
+
+        Button test = rootView.findViewById(R.id.test_button);
+
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int newValue = Integer.parseInt(tickerView.getText()) + 1;
+                tickerView.setText(String.valueOf(newValue));
+                //viewModel.setCont(newValue);
+            }
+        });
 
         //ExampleCounter example = new ExampleCounter();
         //example.start();

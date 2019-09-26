@@ -1,6 +1,6 @@
-package com.busbadajoz.models.data;
+package com.busbadajoz.Data;
 
-import com.busbadajoz.models.data.StopMapModel;
+import com.busbadajoz.models.StopMapModel;
 
 import java.util.HashMap;
 
