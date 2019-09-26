@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,28 +79,39 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     @Override
     public void onBindViewHolder(final BusViewHolder holder, final int position) {
 
+        //It looks like we can't set a font from xml so we ned this
+        //From https://github.com/robinhood/ticker/issues/92#issuecomment-503526527
+        Typeface fontFace = ResourcesCompat.getFont(mContext, R.font.lato_black);
+        holder.time_left.setTypeface(fontFace);
+
         buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModelView>>() {
             @Override
             public void onChanged(ArrayList<BusModelView> busesData) {
-                Log.d(TAG, "onChanged: BusAdapter called");
-                Log.d(TAG, "onChanged: La bandera aqui es " + holder.showingData);
                 if (busesData.get(position).getTimeLeft() != -1) {
-                    Log.d(TAG, "onChanged: Dentro del primer if con dato -> "
-                     + busesData.get(position).getTimeLeft() );
-                    holder.loadingView.setVisibility(View.INVISIBLE);
+                    holder.loadingView.setVisibility(View.GONE);
                     holder.bus.setVisibility(View.VISIBLE);
                     holder.showingData = true;
                 }
+
                 //All the data will change, so let's check on every bus and only change the text if
-                //his data has changed.
+                //its data has changed.
                 if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
-                    Log.d(TAG, "onChanged: Dentro del segundo if");
-                    if (!holder.time_left.getText().equals("-1") || !holder.time_left.getText().equals("-")){
+
+                    // At first, we don't need the animation
+                    if (!holder.time_left.getText().equals("-1") && !holder.time_left.getText().equals("-")){
                         holder.time_left.setAnimationDuration(350);
+                    } else {
+                        holder.time_left.setAnimationDuration(0);
                     }
+
                     holder.time_left.setText(String.valueOf(busesData.get(position).getTimeLeft()));
-                    holder.time_left.setAnimationDuration(0);
                     holder.line_name.setText(busesData.get(position).getLineName());
+
+                    if (holder.time_left.getText().equals("1")){
+                        holder.unit_time_left.setText(R.string.units_time_left);
+                    } else {
+                        holder.unit_time_left.setText(R.string.units_time_left_plural);
+                    }
                 }
             }
         });
@@ -113,7 +126,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             immediately, but when the data is already processed and passed here. It will be then
             when the user will be able to see the detailed info.
 
-            This behaviour *should* be temporal. Ideally the detailed info should be avaiable at all
+            This behaviour *should* be temporal. Ideally the detailed info should be available at all
             times, as it doesn't depend on the time left to the bus to arrive, but right now I don't
             know how to implement it without getting ugly, so it is a compromise we have to make.
          */

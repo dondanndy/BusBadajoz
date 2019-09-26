@@ -6,6 +6,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -14,6 +15,7 @@ import androidx.lifecycle.Transformations;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Typeface;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +32,7 @@ import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.DataViewModel;
 import com.busbadajoz.models.StopModel;
 import com.busbadajoz.models.StopModelView;
+import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
 
@@ -86,6 +89,11 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
         holder.name.setText(this.dataModel.getStopInfo(this.dataModel.getSavedStopsList().get(position)).getName());
         holder.distance.setText("13 km");
+
+        //It looks like we can't set a font from xml so we ned this
+        //From https://github.com/robinhood/ticker/issues/92#issuecomment-503526527
+        Typeface fontFace = ResourcesCompat.getFont(mContext, R.font.lato);
+        holder.updateTime.setTypeface(fontFace);
 
         /*
          ----------- Buses RecyclerView Setup -----------------------------------------------
@@ -174,6 +182,8 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         protected TextView distance;
         protected RecyclerView recyclerView;
         protected LinearLayout detail;
+
+        TickerView updateTime;
         
         protected ConstraintLayout stop_layout;
 
@@ -182,8 +192,10 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.name = itemView.findViewById(R.id.name);
             this.recyclerView = itemView.findViewById(R.id.bus_list);
             this.distance = itemView.findViewById(R.id.distance);
-            this.detail = itemView.findViewById(R.id.expand_test);
+
+            this.detail = itemView.findViewById(R.id.detail_layout);
             this.stop_layout = itemView.findViewById(R.id.stop_layout);
+            this.updateTime = itemView.findViewById(R.id.updated_time);
         }
     }
 

@@ -34,7 +34,8 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="next_stop">Siguiente parada</string>
     <string name="direction">Dirección</string>
-    <string name="estimate">Llegada\nestimada</string>
+    <string name="estimate">Distancia</string>
     <string name="settings_title">Ajustes</string>
+    <string name="update_p1">Actualizado hace </string>
 
 </resources>
