@@ -6,10 +6,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.BusModelView;
-import com.busbadajoz.models.StopLiveDataModel;
-import com.busbadajoz.models.StopModel;
 import com.busbadajoz.models.StopModelView;
 import com.busbadajoz.models.StopMapModel;
 
@@ -32,13 +29,8 @@ public class DataRepository {
     private ArrayList<String> savedStopsList = new ArrayList<>();
 
     public MutableLiveData<ArrayList<StopModelView>> savedStops = new MutableLiveData<>();
-    public ArrayList<StopModelView> nearbyStops = new ArrayList<StopModelView>();
+    public MutableLiveData<ArrayList<StopModelView>> nearbyStops = new MutableLiveData<>();
 
-    /*
-    public MutableLiveData<ArrayList<StopLiveDataModel>> savedStopsData = new MutableLiveData<ArrayList<StopLiveDataModel>>();
-    public MutableLiveData<ArrayList<StopLiveDataModel>> nearbyStopsData = new MutableLiveData<ArrayList<StopLiveDataModel>>();
-
-     */
     volatile boolean stop;
 
     public DataRepository(){

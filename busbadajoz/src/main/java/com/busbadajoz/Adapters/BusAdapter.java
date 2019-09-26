@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.busbadajoz.R;
 import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.BusModelView;
-import com.busbadajoz.models.StopModel;
 import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
@@ -48,22 +47,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                       ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface,
                       LifecycleOwner lifecycleOwner) {
         /*
-            Ok, if you made it here there is something to explain. There are two arrays in the constructor,
-            that will be later checked if equals to set the text. This happens because we are using
-            a TickerView to display the time that the bus will take to arrive to get a nice animation
-            on updates.
+            On this adapter we get a LiveData of all the data necessary to display. At first, the
+            time left will be -1, as we don't have the parsed data yet. When this happens, we will
+            show a view containing a loading animation (or text, I don't know yet but just a
+            placeholder).
 
-            To get that animation we have to call the setText() method of the TickerView, and I didn't
-            find another way to do that apart from the following (there probably is a better way, I'm
-            sure, so I'm open to suggestions):
-
-            If there's been an update on the times we'll call setText(), but _only_ if there's an update,
-            as we are recreating this recyclerview every time a tap in any bus happens. To control this
-            we pass at first the same arrays, so no animations happen.
-
-            Then, as we update the data we call updateData() on the StopAdapter, which recreates the
-            stop views with two different arrays to make the animation and then updates the old data
-            with the new.
+            When we get the data, it will be shown and updated with the TickerView animation.
          */
 
         //Log.d(TAG, "BusAdapter: created, at 0,0 there's " + buses_new.get(0).getTimeLeft());
@@ -87,16 +76,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     @Override
     public void onBindViewHolder(final BusViewHolder holder, final int position) {
-        /*
-        //At first the data view is invisible, so let's set a flag for later.
-        if (holder.bus.getVisibility() == View.INVISIBLE) {
-            Log.d(TAG, "onBindViewHolder: Bandera a falso (position " + position + ")");
-            holder.showingData = false;
-        } else {
-            holder.showingData = true;
-        }
-
-         */
 
         buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModelView>>() {
             @Override
@@ -124,50 +103,21 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             }
         });
 
-/*
-        holder.dataObserver = busesData -> {
-            if (!holder.showingData) {
-                holder.loadingView.setVisibility(View.INVISIBLE);
-                holder.bus.setVisibility(View.VISIBLE);
-                holder.showingData = true;
-            }
+        /*
+            Show the detailed info when it is touched. Only when the info is finally shown, as the
+            buses order will change depending on their availability (some lines are only run at
+            night, or on certain days, for example, and the parsing will make sure the active lines
+            at the time are shown first).
 
-            Log.d(TAG, "onChanged: BusAdapter called");
-            if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
-                holder.time_left.setAnimationDuration(350);
-                holder.time_left.setText(String.valueOf(busesData.get(position).getTimeLeft()));
-                holder.time_left.setAnimationDuration(0);
-                holder.line_name.setText(busesData.get(position).getLineName());
-            }
-            holder.line_name.setText(busesData.get(position).getLineName());
+            On the first load, to avoid a sudden change on that order, we won't show the lines info
+            immediately, but when the data is already processed and passed here. It will be then
+            when the user will be able to see the detailed info.
 
-            holder.time_left.setAnimationDuration(0);
-            holder.time_left.setText(String.valueOf(buses.getValue().get(position).getTimeLeft()));
-        };
-
-        buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModel>>() {
-            @Override
-            public void onChanged(ArrayList<BusModel> busesData) {
-                Log.d(TAG, "onChanged: BusAdapter called");
-                if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
-                    holder.time_left.setAnimationDuration(350);
-                    holder.time_left.setText(busesData.get(position).getTimeLeft());
-                    holder.time_left.setAnimationDuration(0);
-                    holder.line_name.setText(busesData.get(position).getLine());
-                }
-                holder.line_name.setText(busesData.get(position).getLine());
-            }
-        });
-
-        holder.line_name.setText(buses.getValue().get(position).getLineName());
-
-        if (holder.time_left.getText().equals("1")){
-            holder.unit_time_left.setText(R.string.units_time_left);
-        } else {
-            holder.unit_time_left.setText(R.string.units_time_left_plural);
-        }*/
-
-        holder.fullView.setOnClickListener(new View.OnClickListener() {
+            This behaviour *should* be temporal. Ideally the detailed info should be avaiable at all
+            times, as it doesn't depend on the time left to the bus to arrive, but right now I don't
+            know how to implement it without getting ugly, so it is a compromise we have to make.
+         */
+        holder.bus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 adapterInterface.OnItemClicked(position, bus_state);
