@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.BusModelView;
+import com.busbadajoz.models.StopLiveDataModel;
 import com.busbadajoz.models.StopModel;
 import com.busbadajoz.models.StopModelView;
 import com.busbadajoz.models.StopMapModel;
@@ -21,40 +22,50 @@ public class DataRepository {
     /*
         This class is the data repository that gets the info from the internet and feeds it to the
         appropriate ViewModel to show it in a fragment.
+
+        In here we have to separate arrays: one of them contains the static info data refering to the
+        stops, and the LiveData one will hold the data we will update on the worker thread.
      */
 
-    private AppData appData;
+    private AppData appData = new AppData();
     private HashMap<String, StopMapModel> stops_map;
     private ArrayList<String> savedStopsList = new ArrayList<>();
 
-    public MutableLiveData<ArrayList<StopModelView>> savedStopsData = new MutableLiveData<ArrayList<StopModelView>>();
-    public MutableLiveData<ArrayList<StopModelView>> nearbyStopsData = new MutableLiveData<ArrayList<StopModelView>>();
+    public MutableLiveData<ArrayList<StopModelView>> savedStops = new MutableLiveData<>();
+    public ArrayList<StopModelView> nearbyStops = new ArrayList<StopModelView>();
 
+    /*
+    public MutableLiveData<ArrayList<StopLiveDataModel>> savedStopsData = new MutableLiveData<ArrayList<StopLiveDataModel>>();
+    public MutableLiveData<ArrayList<StopLiveDataModel>> nearbyStopsData = new MutableLiveData<ArrayList<StopLiveDataModel>>();
+
+     */
     volatile boolean stop;
 
     public DataRepository(){
 
-        savedStopsList.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+        this.savedStopsList.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
 
         this.stops_map = this.appData.getMap();
         ArrayList<StopModelView> tmp = new ArrayList<>();
-        for (String item : savedStopsList){
+        for (String item : this.savedStopsList){
             tmp.add(this.stops_map.get(item).asStopModelView());
         }
-        this.savedStopsData.setValue(tmp);
+        this.savedStops.setValue(tmp);
     }
 
     public DataRepository(ArrayList<String> stops) {
 
         this.stops_map = this.appData.getMap();
         this.savedStopsList = stops;
+    }
 
+    public void setLiveData(){
         ArrayList<StopModelView> tmp = new ArrayList<>();
-        for (String item : stops) {
+        for (String item : this.savedStopsList) {
             tmp.add(this.stops_map.get(item).asStopModelView());
         }
 
-        this.savedStopsData.setValue(tmp);
+        this.savedStops.setValue(tmp);
     }
 
 
@@ -111,16 +122,16 @@ public class DataRepository {
                     3250,
                     "m"));
         }
+
         stop.setBuses(buses);
         paradas_random.add(stop);
+        }
+
+        return paradas_random;
     }
 
-    return paradas_random;
-}
-
-
-    public MutableLiveData<ArrayList<StopModelView>> getSavedStopsData(){
-        return savedStopsData;
+    public MutableLiveData<ArrayList<StopModelView>> getSavedStops(){
+        return this.savedStops;
     }
 
     public class DataLoop extends Thread {
@@ -133,7 +144,7 @@ public class DataRepository {
             //Looper.prepare();
             Handler threadHandler = new Handler(Looper.getMainLooper());
             try {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -142,8 +153,8 @@ public class DataRepository {
                     threadHandler.post(new Runnable() {
                                            @Override
                                            public void run() {
-                                               Log.d("Worker Thread", "run: Ojo que vienen datos");
-                                               savedStopsData.postValue(extractTestData(savedStopsList));
+                                               Log.d("WORKER THREAD", "run: Ojo que vienen datos");
+                                               savedStops.postValue(extractTestData(savedStopsList));
                                            }
                                        }
 
@@ -153,6 +164,7 @@ public class DataRepository {
                     e.printStackTrace();
                 }
             }
+            Log.d("WORKER THREAD", "run: Thread stopped");
         }
     }
 }

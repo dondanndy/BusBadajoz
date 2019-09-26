@@ -13,7 +13,6 @@ public class StopModelView {
     private ArrayList<BusModelView> buses;
 
     private int distance;
-    private Instant updatedTime;
 
     public StopModelView(String name, int dist){
         this.name = name;
@@ -44,13 +43,5 @@ public class StopModelView {
 
     public void setDistance(int distance) {
         this.distance = distance;
-    }
-
-    public Instant getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(Instant updatedTime) {
-        this.updatedTime = updatedTime;
     }
 }

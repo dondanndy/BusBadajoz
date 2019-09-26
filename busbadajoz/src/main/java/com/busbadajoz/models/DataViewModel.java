@@ -1,13 +1,7 @@
 package com.busbadajoz.models;
 
-import android.provider.CalendarContract;
-import android.provider.ContactsContract;
-import android.util.Log;
-
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -23,30 +17,40 @@ public class DataViewModel extends ViewModel {
 
     private String TAG = "DataViewModel";
 
-    //Observer<ArrayList<StopModelView>> dataObserver;
-
     private DataRepository dataRepository;
 
-    private ArrayList<String> savedStopsList = new ArrayList<>();
+    private ArrayList<String> savedStopsList;
 
-    private LiveData<ArrayList<StopModelView>> savedStops;
-    private LiveData<ArrayList<StopModelView>> nearbyStops;
+    private ArrayList<StopModelView> savedStops;
+    private ArrayList<StopModelView> nearbyStops;
+
+    private LiveData<ArrayList<StopModelView>> savedStopsData;
+    private MutableLiveData<ArrayList<StopModelView>> nearbyStopsData;
 
     public DataViewModel(){
         //TODO:  fetch savedStop List
 
-        dataRepository = new DataRepository();
+        savedStopsList = new ArrayList<>();
 
         //As a test, provisional:
-        //this.savedStopsList.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+        this.savedStopsList.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
+
+        dataRepository = new DataRepository(this.savedStopsList);
+        dataRepository.setLiveData();
 
         fillNearbyStops();
         fillsavedStops(savedStopsList);
 
-        //Propagate observing
-        savedStops = Transformations.map(dataRepository.getSavedStopsData(), data -> {
+        this.savedStopsData = Transformations.map(dataRepository.getSavedStops(), data -> {
             return data;
         });
+
+        /*Propagate observing
+        this.savedStops = Transformations.map(dataRepository.getSavedStopsData(), data -> {
+            return data;
+        });*/
+
+        //dataRepository.setLiveData();
 
         /*
         //Set observing
@@ -63,7 +67,6 @@ public class DataViewModel extends ViewModel {
 
     public void fillsavedStops(ArrayList<String> stops){
         dataRepository.setStopsListQuery(stops);
-
     }
 
     public void fillNearbyStops(){}
@@ -89,19 +92,35 @@ public class DataViewModel extends ViewModel {
     }
 
 
-    public LiveData<ArrayList<StopModelView>> getSavedStops() {
+    public ArrayList<StopModelView> getSavedStops() {
         return savedStops;
     }
 
-    public void setSavedStops(LiveData<ArrayList<StopModelView>> savedStops) {
+    public void setSavedStops(ArrayList<StopModelView> savedStops) {
         this.savedStops = savedStops;
     }
 
-    public LiveData<ArrayList<StopModelView>> getNearbyStops() {
+    public ArrayList<StopModelView> getNearbyStops() {
         return nearbyStops;
     }
 
-    public void setNearbyStops(LiveData<ArrayList<StopModelView>> nearbyStops) {
+    public void setNearbyStops(ArrayList<StopModelView> nearbyStops) {
         this.nearbyStops = nearbyStops;
+    }
+
+    public void setSavedStopsList (ArrayList<String> list){
+        this.savedStopsList = list;
+    }
+
+    public ArrayList<String> getSavedStopsList(){
+        return this.savedStopsList;
+    }
+
+    public LiveData<ArrayList<StopModelView>> getSavedStopsData() {
+        return savedStopsData;
+    }
+
+    public void setSavedStopsData(LiveData<ArrayList<StopModelView>> savedStopsData) {
+        this.savedStopsData = savedStopsData;
     }
 }

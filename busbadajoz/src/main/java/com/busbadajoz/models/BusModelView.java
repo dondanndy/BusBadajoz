@@ -10,6 +10,7 @@ public class BusModelView {
      */
 
     private String lineName;
+
     private int timeLeft;
     private String unitTimeLeft;
 
@@ -23,22 +24,20 @@ public class BusModelView {
         //Everything default
         this.lineName = "";
         this.timeLeft = -1;
-        this.unitTimeLeft = "";
 
         this.distanceLeft = -1;
-        this.unitDistanceLeft = "";
+        this.unitDistanceLeft = "m";
 
         this.nextStop = new String[2];
         this.direction = new String[2];
     }
 
-    public BusModelView(String line, int time, String units, int distance, String unitsDist){
+    public BusModelView(String line, int timeLeft, String unitTimeLeft, int distanceLeft, String unitDistanceLeft){
         this.lineName = line;
-        this.timeLeft = time;
-        this.unitTimeLeft = units;
+        this.timeLeft = timeLeft;
 
-        this.distanceLeft = distance;
-        this.unitDistanceLeft = unitsDist;
+        this.distanceLeft = distanceLeft;
+        this.unitDistanceLeft = unitDistanceLeft;
 
         this.nextStop = new String[2];
         this.direction = new String[2];
@@ -60,12 +59,12 @@ public class BusModelView {
         this.direction = direction;
     }
 
-    public String getUnitTimeLeft() {
-        return unitTimeLeft;
+    public String getLineName() {
+        return lineName;
     }
 
-    public void setUnitTimeLeft(String unitTimeLeft) {
-        this.unitTimeLeft = unitTimeLeft;
+    public void setLineName(String lineName) {
+        this.lineName = lineName;
     }
 
     public int getTimeLeft() {
@@ -76,20 +75,20 @@ public class BusModelView {
         this.timeLeft = timeLeft;
     }
 
-    public String getLineName() {
-        return lineName;
-    }
-
-    public void setLineName(String lineName) {
-        this.lineName = lineName;
-    }
-
     public int getDistanceLeft() {
         return distanceLeft;
     }
 
     public void setDistanceLeft(int distanceLeft) {
         this.distanceLeft = distanceLeft;
+    }
+
+    public String getUnitTimeLeft() {
+        return unitTimeLeft;
+    }
+
+    public void setUnitTimeLeft(String unitTimeLeft) {
+        this.unitTimeLeft = unitTimeLeft;
     }
 
     public String getUnitDistanceLeft() {

@@ -1,5 +1,6 @@
 package com.busbadajoz.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -54,7 +55,7 @@ public class SavedFragment extends Fragment {
 
         //this.data = data;
 
-        dataModel = ViewModelProviders.of(getActivity()).get(DataViewModel.class);
+
 
         /*
         ArrayList<StopModel> tmp = new ArrayList<>();
@@ -85,6 +86,8 @@ public class SavedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        dataModel = ViewModelProviders.of(getActivity()).get(DataViewModel.class);
         //this.map = ((MainActivity) getActivity()).giveMap().getMap();
         //createDummyData();
 
@@ -116,7 +119,7 @@ public class SavedFragment extends Fragment {
 
         saved_stops_recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        StopAdapter adapter = new StopAdapter(dataModel, getContext());
+        StopAdapter adapter = new StopAdapter(dataModel, getContext(), this);
         saved_stops_recyclerview.setAdapter(adapter);
 
         return rootView;

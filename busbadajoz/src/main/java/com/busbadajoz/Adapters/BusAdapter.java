@@ -37,7 +37,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private LiveData<ArrayList<BusModelView>> buses;
     private MutableLiveData<BusModel> bus_live;
 
-    //private LifecycleOwner lifecycleOwner;
+    private LifecycleOwner lifecycleOwner;
     //private ArrayList<BusModel> buses_new;
     private ArrayList<Boolean> bus_state;
     private Context mContext;
@@ -45,7 +45,8 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private BusAdapterInterface adapterInterface;
 
     public BusAdapter(LiveData<ArrayList<BusModelView>> buses, int bus_selected,
-                      ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface) {
+                      ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface,
+                      LifecycleOwner lifecycleOwner) {
         /*
             Ok, if you made it here there is something to explain. There are two arrays in the constructor,
             that will be later checked if equals to set the text. This happens because we are using
@@ -68,7 +69,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         //Log.d(TAG, "BusAdapter: created, at 0,0 there's " + buses_new.get(0).getTimeLeft());
         this.bus_selected = bus_selected;
         this.buses = buses;
-        //this.lifecycleOwner = lifecycleOwner;
+        this.lifecycleOwner = lifecycleOwner;
         //this.buses_new = buses_new;
         this.bus_size = bus_size;
         this.mContext = mContext;
@@ -86,11 +87,51 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     @Override
     public void onBindViewHolder(final BusViewHolder holder, final int position) {
+        /*
+        //At first the data view is invisible, so let's set a flag for later.
+        if (holder.bus.getVisibility() == View.INVISIBLE) {
+            Log.d(TAG, "onBindViewHolder: Bandera a falso (position " + position + ")");
+            holder.showingData = false;
+        } else {
+            holder.showingData = true;
+        }
 
-        holder.time_left.setAnimationDuration(0);
-        holder.time_left.setText(String.valueOf(buses.getValue().get(position).getTimeLeft()));
+         */
 
+        buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModelView>>() {
+            @Override
+            public void onChanged(ArrayList<BusModelView> busesData) {
+                Log.d(TAG, "onChanged: BusAdapter called");
+                Log.d(TAG, "onChanged: La bandera aqui es " + holder.showingData);
+                if (busesData.get(position).getTimeLeft() != -1) {
+                    Log.d(TAG, "onChanged: Dentro del primer if con dato -> "
+                     + busesData.get(position).getTimeLeft() );
+                    holder.loadingView.setVisibility(View.INVISIBLE);
+                    holder.bus.setVisibility(View.VISIBLE);
+                    holder.showingData = true;
+                }
+                //All the data will change, so let's check on every bus and only change the text if
+                //his data has changed.
+                if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
+                    Log.d(TAG, "onChanged: Dentro del segundo if");
+                    if (!holder.time_left.getText().equals("-1") || !holder.time_left.getText().equals("-")){
+                        holder.time_left.setAnimationDuration(350);
+                    }
+                    holder.time_left.setText(String.valueOf(busesData.get(position).getTimeLeft()));
+                    holder.time_left.setAnimationDuration(0);
+                    holder.line_name.setText(busesData.get(position).getLineName());
+                }
+            }
+        });
+
+/*
         holder.dataObserver = busesData -> {
+            if (!holder.showingData) {
+                holder.loadingView.setVisibility(View.INVISIBLE);
+                holder.bus.setVisibility(View.VISIBLE);
+                holder.showingData = true;
+            }
+
             Log.d(TAG, "onChanged: BusAdapter called");
             if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
                 holder.time_left.setAnimationDuration(350);
@@ -99,11 +140,11 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                 holder.line_name.setText(busesData.get(position).getLineName());
             }
             holder.line_name.setText(busesData.get(position).getLineName());
+
+            holder.time_left.setAnimationDuration(0);
+            holder.time_left.setText(String.valueOf(buses.getValue().get(position).getTimeLeft()));
         };
 
-
-
-        /*
         buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModel>>() {
             @Override
             public void onChanged(ArrayList<BusModel> busesData) {
@@ -116,7 +157,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                 }
                 holder.line_name.setText(busesData.get(position).getLine());
             }
-        });*/
+        });
 
         holder.line_name.setText(buses.getValue().get(position).getLineName());
 
@@ -124,9 +165,9 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             holder.unit_time_left.setText(R.string.units_time_left);
         } else {
             holder.unit_time_left.setText(R.string.units_time_left_plural);
-        }
+        }*/
 
-        holder.bus.setOnClickListener(new View.OnClickListener() {
+        holder.fullView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 adapterInterface.OnItemClicked(position, bus_state);
@@ -168,26 +209,36 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
     @Override
     public int getItemCount() {
-        return (null != buses ? buses.getValue().size() : bus_size);
+        return (null != buses.getValue() ? buses.getValue().size() : this.bus_size);
     }
 
     public class BusViewHolder extends RecyclerView.ViewHolder {
 
+        private Boolean showingData;
+
         private TextView line_name;
         private TickerView time_left;
         private TextView unit_time_left;
-        private ConstraintLayout bottom_triangle;
 
+        private ConstraintLayout bottom_triangle;
         private ConstraintLayout bus;
+        private ConstraintLayout loadingView;
+        private ConstraintLayout fullView;
 
         private Observer<ArrayList<BusModelView>> dataObserver;
 
         public BusViewHolder(View itemView) {
             super(itemView);
+
+            this.showingData = false;
+
             this.line_name = itemView.findViewById(R.id.line_name);
             this.time_left = itemView.findViewById(R.id.time_left);
             this.unit_time_left = itemView.findViewById(R.id.units_time_left);
+
             this.bus = itemView.findViewById(R.id.bus_border);
+            this.loadingView = itemView.findViewById(R.id.loading_view);
+            this.fullView = itemView.findViewById(R.id.full_bus_layout);
             this.bottom_triangle = itemView.findViewById(R.id.lower_triangle_layout);
         }
 
