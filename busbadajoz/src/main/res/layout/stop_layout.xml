@@ -21,80 +21,93 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/distance"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/stop_info"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/lato"
-        android:layout_marginTop="4dp"
-        android:text="33 km"
-        android:textColor="@color/text_color_secondary"
-        android:textSize="15sp"
-        app:layout_constraintLeft_toLeftOf="@id/name"
-        app:layout_constraintTop_toBottomOf="@id/name" />
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name">
 
-    <TextView
-        android:id="@+id/separator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="4dp"
-        android:fontFamily="@font/lato"
-        android:text=" • "
-        android:textColor="@color/text_color_secondary"
-        android:textSize="12sp"
-        app:layout_constraintLeft_toRightOf="@id/distance"
-        app:layout_constraintTop_toBottomOf="@id/name" />
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/lato"
+            android:text="33 km"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp" />
 
-    <TextView
-        android:id="@+id/update_p1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="4dp"
-        android:fontFamily="@font/lato"
-        android:text="@string/update_p1"
-        android:textColor="@color/text_color_secondary"
-        android:textSize="15sp"
-        app:layout_constraintLeft_toRightOf="@id/separator"
-        app:layout_constraintTop_toBottomOf="@id/name" />
+        <TextView
+            android:id="@+id/separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/lato"
+            android:text=" \u00b7 "
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp" />
 
-    <com.robinhood.ticker.TickerView
-        android:id="@+id/updated_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="4dp"
-        android:text="12"
-        android:textColor="@color/text_color_secondary"
-        android:textSize="15sp"
-        app:layout_constraintLeft_toRightOf="@id/update_p1"
-        app:layout_constraintTop_toBottomOf="@id/name"
-        app:ticker_animationDuration="0"
-        app:ticker_defaultCharacterList="number" />
+        <TextView
+            android:id="@+id/update_p1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/lato"
+            android:text="@string/update_p1"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp" />
 
-    <TextView
-        android:id="@+id/update_p2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="4dp"
-        android:fontFamily="@font/lato"
-        android:text="minutos"
-        android:textColor="@color/text_color_secondary"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@id/updated_time"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+        <com.robinhood.ticker.TickerView
+            android:id="@+id/updated_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="4dp"
+            android:text="12"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp"
+            app:ticker_animationDuration="0"
+            app:ticker_defaultCharacterList="number" />
+
+        <com.robinhood.ticker.TickerView
+            android:id="@+id/updated_time_units"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="4dp"
+            android:text="minutos"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp"
+            app:ticker_animationDuration="0"
+            app:ticker_defaultCharacterList="alphabet" />
+
+        <TextView
+            android:id="@+id/update_p2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/lato"
+            android:text=""
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bus_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:clipToPadding="false"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        app:layout_constraintTop_toBottomOf="@id/distance">
+        app:layout_constraintTop_toBottomOf="@id/stop_info">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -130,15 +143,17 @@
                 android:textColor="@color/gray_detail"
                 android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/estimate_time"
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/estimate_distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lato_light"
-                android:text="00:00"
+                android:gravity="center_horizontal"
+                android:text="3.5"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                app:ticker_animationDuration="0"
+                app:ticker_defaultCharacterList="number" />
         </LinearLayout>
 
         <LinearLayout

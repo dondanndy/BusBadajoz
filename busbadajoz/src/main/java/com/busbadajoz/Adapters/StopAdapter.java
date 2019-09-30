@@ -90,10 +90,15 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         holder.name.setText(this.dataModel.getStopInfo(this.dataModel.getSavedStopsList().get(position)).getName());
         holder.distance.setText("13 km");
 
-        //It looks like we can't set a font from xml so we ned this
+        //It looks like we can't set a font from xml so we need this
         //From https://github.com/robinhood/ticker/issues/92#issuecomment-503526527
         Typeface fontFace = ResourcesCompat.getFont(mContext, R.font.lato);
         holder.updateTime.setTypeface(fontFace);
+        holder.updateTimeUnits.setTypeface(fontFace);
+
+        fontFace = ResourcesCompat.getFont(mContext, R.font.lato_light);
+        holder.distanceLeft.setTypeface(fontFace);
+
 
         /*
          ----------- Buses RecyclerView Setup -----------------------------------------------
@@ -184,6 +189,10 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         protected LinearLayout detail;
 
         TickerView updateTime;
+        TickerView updateTimeUnits;
+
+        TickerView distanceLeft;
+        //TickerView distanceLeftUnits;
         
         protected ConstraintLayout stop_layout;
 
@@ -196,6 +205,9 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.detail = itemView.findViewById(R.id.detail_layout);
             this.stop_layout = itemView.findViewById(R.id.stop_layout);
             this.updateTime = itemView.findViewById(R.id.updated_time);
+            this.updateTimeUnits = itemView.findViewById(R.id.updated_time_units);
+
+            this.distanceLeft = itemView.findViewById(R.id.estimate_distance);
         }
     }
 
