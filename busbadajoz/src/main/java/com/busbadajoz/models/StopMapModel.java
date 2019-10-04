@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class StopMapModel{
     private String name;
     private float[] location;
+    //First index means line, second means, in order, name, next stop and direction.
     private String[][] buses;
 
     public StopMapModel(String name, String[][] buses, float[] location){
@@ -56,11 +57,11 @@ public class StopMapModel{
     }
 
     public StopModelView asStopModelView(){
-        StopModelView tmp =  new StopModelView(this.name, -1);
+        StopModelView tmp =  new StopModelView(this.name, -1, 12, " minutos");
 
         ArrayList<BusModelView> tmp2 = new ArrayList();
         for (int i=0; i < this.buses.length; i++){
-            tmp2.add(new BusModelView());
+            tmp2.add(new BusModelView("Línea "+this.buses[i][0], -1, "minutos", -1,"m"));
         }
         tmp.setBuses(tmp2);
 

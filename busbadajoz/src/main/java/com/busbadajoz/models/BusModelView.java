@@ -1,6 +1,9 @@
 package com.busbadajoz.models;
 
-public class BusModelView {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class BusModelView implements Parcelable {
     /*
         The same way as StopModelView, this model is a view model, that contains everything to display,
         line, time left and units mainly.
@@ -24,6 +27,7 @@ public class BusModelView {
         //Everything default
         this.lineName = "";
         this.timeLeft = -1;
+        this.unitTimeLeft = "";
 
         this.distanceLeft = -1;
         this.unitDistanceLeft = "m";
@@ -35,6 +39,7 @@ public class BusModelView {
     public BusModelView(String line, int timeLeft, String unitTimeLeft, int distanceLeft, String unitDistanceLeft){
         this.lineName = line;
         this.timeLeft = timeLeft;
+        this.unitTimeLeft = unitTimeLeft;
 
         this.distanceLeft = distanceLeft;
         this.unitDistanceLeft = unitDistanceLeft;
@@ -97,5 +102,39 @@ public class BusModelView {
 
     public void setUnitDistanceLeft(String unitDistanceLeft) {
         this.unitDistanceLeft = unitDistanceLeft;
+    }
+
+    //Parcelable stuff
+    protected BusModelView(Parcel in) {
+        super();
+        readFromParcel(in);
+    }
+
+    public static final Parcelable.Creator<BusModelView> CREATOR = new Parcelable.Creator<BusModelView>() {
+        public BusModelView createFromParcel(Parcel in) {
+            return new BusModelView(in);
+        }
+
+        public BusModelView[] newArray(int size) {
+
+            return new BusModelView[size];
+        }
+
+    };
+
+    private void readFromParcel(Parcel in) {
+        this.lineName = in.readString();
+        this.timeLeft = in.readInt();
+        this.unitTimeLeft = in.readString();
+
+    }
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.lineName);
+        dest.writeInt(this.timeLeft);
+        dest.writeString(this.unitTimeLeft);
     }
 }

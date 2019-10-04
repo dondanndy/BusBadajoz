@@ -6,15 +6,14 @@ import android.content.Context;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +21,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.busbadajoz.R;
-import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.BusModelView;
 import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
@@ -35,33 +34,19 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private int bus_tapped = -1;
     private int bus_selected;
     private int bus_size;
-    private LiveData<ArrayList<BusModelView>> buses;
-    private MutableLiveData<BusModel> bus_live;
-
-    private LifecycleOwner lifecycleOwner;
-    //private ArrayList<BusModel> buses_new;
+    private ArrayList<BusModelView> buses;
     private ArrayList<Boolean> bus_state;
     private Context mContext;
 
     private BusAdapterInterface adapterInterface;
 
-    public BusAdapter(LiveData<ArrayList<BusModelView>> buses, int bus_selected,
-                      ArrayList<Boolean> bus_states, int bus_size, Context mContext, BusAdapterInterface adapterInterface,
-                      LifecycleOwner lifecycleOwner) {
-        /*
-            On this adapter we get a LiveData of all the data necessary to display. At first, the
-            time left will be -1, as we don't have the parsed data yet. When this happens, we will
-            show a view containing a loading animation (or text, I don't know yet but just a
-            placeholder).
-
-            When we get the data, it will be shown and updated with the TickerView animation.
-         */
-
-        //Log.d(TAG, "BusAdapter: created, at 0,0 there's " + buses_new.get(0).getTimeLeft());
+    public BusAdapter(ArrayList<BusModelView> buses, int bus_selected,
+                      ArrayList<Boolean> bus_states, int bus_size, Context mContext,
+                      BusAdapterInterface adapterInterface) {
         this.bus_selected = bus_selected;
+
+
         this.buses = buses;
-        this.lifecycleOwner = lifecycleOwner;
-        //this.buses_new = buses_new;
         this.bus_size = bus_size;
         this.mContext = mContext;
 
@@ -82,39 +67,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         //It looks like we can't set a font from xml so we ned this
         //From https://github.com/robinhood/ticker/issues/92#issuecomment-503526527
         Typeface fontFace = ResourcesCompat.getFont(mContext, R.font.lato_black);
-        holder.time_left.setTypeface(fontFace);
-
-        buses.observe(this.lifecycleOwner, new Observer<ArrayList<BusModelView>>() {
-            @Override
-            public void onChanged(ArrayList<BusModelView> busesData) {
-                if (busesData.get(position).getTimeLeft() != -1) {
-                    holder.loadingView.setVisibility(View.GONE);
-                    holder.bus.setVisibility(View.VISIBLE);
-                    holder.showingData = true;
-                }
-
-                //All the data will change, so let's check on every bus and only change the text if
-                //its data has changed.
-                if (!holder.time_left.getText().equals(busesData.get(position).getTimeLeft())) {
-
-                    // At first, we don't need the animation
-                    if (!holder.time_left.getText().equals("-1") && !holder.time_left.getText().equals("-")){
-                        holder.time_left.setAnimationDuration(350);
-                    } else {
-                        holder.time_left.setAnimationDuration(0);
-                    }
-
-                    holder.time_left.setText(String.valueOf(busesData.get(position).getTimeLeft()));
-                    holder.line_name.setText(busesData.get(position).getLineName());
-
-                    if (holder.time_left.getText().equals("1")){
-                        holder.unit_time_left.setText(R.string.units_time_left);
-                    } else {
-                        holder.unit_time_left.setText(R.string.units_time_left_plural);
-                    }
-                }
-            }
-        });
+        holder.timeLeft.setTypeface(fontFace);
 
         /*
             Show the detailed info when it is touched. Only when the info is finally shown, as the
@@ -130,6 +83,11 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             times, as it doesn't depend on the time left to the bus to arrive, but right now I don't
             know how to implement it without getting ugly, so it is a compromise we have to make.
          */
+
+        holder.lineName.setText(this.buses.get(position).getLineName());
+        holder.timeLeft.setText(String.valueOf(this.buses.get(position).getTimeLeft()));
+        holder.unitsTimeLeft.setText(this.buses.get(position).getUnitTimeLeft());
+
         holder.bus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,40 +108,86 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
         // Change only the color of the tapped bus.
         if (bus_selected == position) {
-            holder.bottom_triangle.setVisibility(View.VISIBLE);
+            holder.bottomTriangle.setVisibility(View.VISIBLE);
         } else {
-            holder.bottom_triangle.setVisibility(View.INVISIBLE);
+            holder.bottomTriangle.setVisibility(View.INVISIBLE);
         }
     }
 
+    @Override
+    public void onBindViewHolder(final BusViewHolder holder, final int position, List<Object> payloads) {
+        if (payloads.isEmpty()){
+            onBindViewHolder(holder, position);
+        } else {
+            Bundle o = (Bundle) payloads.get(0);
+            for (String key : o.keySet()) {
+
+                if (key.equals("NAME")) {
+                    //Update the time units
+                    holder.lineName.setText((String) o.get(key));
+                }
+
+                if (key.equals("TIME")) {
+                    //Update the time
+                    holder.timeLeft.setAnimationDuration(250);
+                    holder.timeLeft.setText(String.valueOf( (Integer) o.get(key)));
+                    holder.timeLeft.setAnimationDuration(0);
+                }
+
+                if (key.equals("TIME_UNITS")) {
+                    //Update the time units
+                    holder.unitsTimeLeft.setText((String) o.get(key));
+                }
+            }
+
+            if (!holder.timeLeft.getText().equals("-1")) {
+                holder.loadingView.setVisibility(View.GONE);
+                holder.bus.setVisibility(View.VISIBLE);
+                holder.showingData = true;
+            }
+        }
+    }
+
+
     private void setBusWarning(BusViewHolder holder) {
         ((GradientDrawable) holder.bus.getBackground()).setColor(Color.parseColor("#B00020"));
-        holder.line_name.setTextColor(Color.WHITE);
-        holder.time_left.setTextColor(Color.WHITE);
-        holder.unit_time_left.setTextColor(Color.WHITE);
+        holder.lineName.setTextColor(Color.WHITE);
+        holder.timeLeft.setTextColor(Color.WHITE);
+        holder.unitsTimeLeft.setTextColor(Color.WHITE);
     }
 
     private void removeBusWarning(BusViewHolder holder){
         ((GradientDrawable) holder.bus.getBackground()).setColor(Color.TRANSPARENT);
-        holder.line_name.setTextColor(Color.BLACK);
-        holder.time_left.setTextColor(Color.BLACK);
-        holder.unit_time_left.setTextColor(Color.BLACK);
+        holder.lineName.setTextColor(Color.BLACK);
+        holder.timeLeft.setTextColor(Color.BLACK);
+        holder.unitsTimeLeft.setTextColor(Color.BLACK);
     }
 
     @Override
     public int getItemCount() {
-        return (null != buses.getValue() ? buses.getValue().size() : this.bus_size);
+        return (null != buses ? buses.size() : this.bus_size);
+    }
+
+    public void updateData(ArrayList<BusModelView> newData){
+        Log.d(TAG, "updateData: new Data = " + newData);
+        Log.d(TAG, "updateData: old Data = " + this.buses);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                new BusDiffUtilCallback(this.buses, newData));
+        diffResult.dispatchUpdatesTo(this);
+
+        Log.d(TAG, "updateData (Bus): Finished update");
+        this.buses = newData;
     }
 
     public class BusViewHolder extends RecyclerView.ViewHolder {
 
         private Boolean showingData;
 
-        private TextView line_name;
-        private TickerView time_left;
-        private TextView unit_time_left;
+        private TextView lineName;
+        private TickerView timeLeft;
+        private TextView unitsTimeLeft;
 
-        private ConstraintLayout bottom_triangle;
+        private ConstraintLayout bottomTriangle;
         private ConstraintLayout bus;
         private ConstraintLayout loadingView;
         private ConstraintLayout fullView;
@@ -195,14 +199,14 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
             this.showingData = false;
 
-            this.line_name = itemView.findViewById(R.id.line_name);
-            this.time_left = itemView.findViewById(R.id.time_left);
-            this.unit_time_left = itemView.findViewById(R.id.units_time_left);
+            this.lineName = itemView.findViewById(R.id.line_name);
+            this.timeLeft = itemView.findViewById(R.id.time_left);
+            this.unitsTimeLeft = itemView.findViewById(R.id.units_time_left);
 
             this.bus = itemView.findViewById(R.id.bus_border);
             this.loadingView = itemView.findViewById(R.id.loading_view);
             this.fullView = itemView.findViewById(R.id.full_bus_layout);
-            this.bottom_triangle = itemView.findViewById(R.id.lower_triangle_layout);
+            this.bottomTriangle = itemView.findViewById(R.id.lower_triangle_layout);
         }
 
     }

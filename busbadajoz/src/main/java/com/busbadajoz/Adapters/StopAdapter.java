@@ -7,15 +7,12 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,11 +27,12 @@ import com.busbadajoz.R;
 
 import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.DataViewModel;
-import com.busbadajoz.models.StopModel;
 import com.busbadajoz.models.StopModelView;
 import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder>{
 
@@ -52,25 +50,24 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     private DataViewModel dataModel;
 
-    private LifecycleOwner lifecycleOwner;
-
     private int row_index = -1;
 
-    private MutableLiveData<ArrayList<StopModel>> stop_models;
+    private ArrayList<StopModelView> stopsModels;
 
     private ArrayList<StopModelState> stop_states = new ArrayList<>();
 
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
 
-    public StopAdapter(DataViewModel dataModel, Context mContext, LifecycleOwner lifecycleOwner) {
+    public StopAdapter(DataViewModel dataModel, Context mContext, ArrayList<StopModelView> data) {
         this.mContext = mContext;
 
         this.dataModel = dataModel;
 
-        this.lifecycleOwner = lifecycleOwner;
+        this.stopsModels = data;
+
         recycledViewPool = new RecyclerView.RecycledViewPool();
-        for (int i = 0; i < dataModel.getSavedStopsList().size(); i++ ) {
+        for (int i = 0; i < dataModel.getSavedStopsList().size(); i++) {
             this.stop_states.add(new StopModelState(this.dataModel.getStopInfo(this.dataModel.getSavedStopsList().get(i)).getBuses().size()));
             this.updated.add(false);
         }
@@ -126,18 +123,15 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             }
         };
 
-        LiveData<ArrayList<BusModelView>> stop_model = Transformations.map(this.dataModel.getSavedStopsData(), model -> {
-           return model.get(position).getBuses();
-        });
-
-        BusAdapter adapter = new BusAdapter(stop_model, stop_states.get(position).getBusSelected(),
+        //Passing the data to the adapter
+        holder.busAdapter = new BusAdapter(this.stopsModels.get(position).getBuses(), stop_states.get(position).getBusSelected(),
                 stop_states.get(position).getBusesStates(), this.dataModel.getStopInfo(this.dataModel.getSavedStopsList().get(position)).getBuses().size(),
-                mContext, adapterInterface, this.lifecycleOwner);
+                mContext, adapterInterface);
 
         //Layout and Adapter setup
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
-        holder.recyclerView.setAdapter(adapter);
+        holder.recyclerView.setAdapter(holder.busAdapter);
         holder.recyclerView.setRecycledViewPool(recycledViewPool);
 
         //Scroll state listener to save the view when the user stops scrolling.
@@ -166,6 +160,40 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         }
     }
 
+
+    @Override
+    public void onBindViewHolder(final StopViewHolder holder, final int position, List<Object> payloads) {
+        if (payloads.isEmpty()){
+            onBindViewHolder(holder, position);
+        } else {
+            Bundle o = (Bundle) payloads.get(0);
+            for (String key : o.keySet()) {
+                if (key.equals("DISTANCE")) {
+                    holder.distance.setText(String.valueOf((int) o.get(key)));
+                }
+
+                if (key.equals("UPDATE_TIME")) {
+                    //Update the time
+                    holder.updateTime.setAnimationDuration(250);
+                    holder.updateTime.setText(String.valueOf((int) o.get(key)));
+                    holder.updateTime.setAnimationDuration(0);
+                }
+
+                if (key.equals("UPDATE_UNITS")) {
+                    //Update the time units
+                    holder.updateTimeUnits.setAnimationDuration(250);
+                    holder.updateTimeUnits.setText((String) o.get(key));
+                    holder.updateTimeUnits.setAnimationDuration(0);
+                }
+
+                if (key.equals("BUSES")) {
+                    //Update the buses recyclerview with another DiffUtil
+                    holder.busAdapter.updateData((ArrayList<BusModelView>) o.get(key));
+                }
+            }
+        }
+    }
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -178,7 +206,15 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     @Override
     public int getItemCount() {
-        return (dataModel.getSavedStopsList().size());
+        return dataModel.getSavedStopsList().size();
+    }
+
+    public void updateData(ArrayList<StopModelView> newData){
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                new StopDiffUtilCallback(this.stopsModels, newData));
+        diffResult.dispatchUpdatesTo(this);
+
+        this.stopsModels = newData;
     }
 
     public class StopViewHolder extends RecyclerView.ViewHolder {
@@ -186,6 +222,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         protected TextView name;
         protected TextView distance;
         protected RecyclerView recyclerView;
+        protected BusAdapter busAdapter;
         protected LinearLayout detail;
 
         TickerView updateTime;
@@ -193,6 +230,9 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
         TickerView distanceLeft;
         //TickerView distanceLeftUnits;
+
+        protected TextView nextStop;
+        protected TextView directionStop;
         
         protected ConstraintLayout stop_layout;
 
@@ -202,12 +242,14 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.recyclerView = itemView.findViewById(R.id.bus_list);
             this.distance = itemView.findViewById(R.id.distance);
 
-            this.detail = itemView.findViewById(R.id.detail_layout);
             this.stop_layout = itemView.findViewById(R.id.stop_layout);
             this.updateTime = itemView.findViewById(R.id.updated_time);
             this.updateTimeUnits = itemView.findViewById(R.id.updated_time_units);
 
+            this.detail = itemView.findViewById(R.id.detail_layout);
             this.distanceLeft = itemView.findViewById(R.id.estimate_distance);
+            this.nextStop = itemView.findViewById(R.id.next_stop_name);
+            this.directionStop = itemView.findViewById(R.id.direction_name);
         }
     }
 

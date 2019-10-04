@@ -13,12 +13,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loading_view"
-        android:background="@drawable/bus_border"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@drawable/bus_border"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/bus_border"
         app:layout_constraintTop_toTopOf="@id/bus_border"
-        android:visibility="visible"
         tools:layout_editor_absoluteX="10dp">
 
         <TextView

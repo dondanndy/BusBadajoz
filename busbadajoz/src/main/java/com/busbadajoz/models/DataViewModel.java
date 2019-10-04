@@ -1,5 +1,7 @@
 package com.busbadajoz.models;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -29,7 +31,6 @@ public class DataViewModel extends ViewModel {
 
     public DataViewModel(){
         //TODO:  fetch savedStop List
-
         savedStopsList = new ArrayList<>();
 
         //As a test, provisional:
@@ -39,30 +40,13 @@ public class DataViewModel extends ViewModel {
         dataRepository.setLiveData();
 
         fillNearbyStops();
-        fillsavedStops(savedStopsList);
+        //fillsavedStops(savedStopsList);
 
         this.savedStopsData = Transformations.map(dataRepository.getSavedStops(), data -> {
             return data;
         });
 
-        /*Propagate observing
-        this.savedStops = Transformations.map(dataRepository.getSavedStopsData(), data -> {
-            return data;
-        });*/
-
-        //dataRepository.setLiveData();
-
-        /*
-        //Set observing
-        dataObserver = new Observer<ArrayList<StopModelView>>() {
-            @Override
-            public void onChanged(ArrayList<StopModelView> stopModels) {
-                Log.d(TAG, "onChanged: SavedFragment called");
-                savedStops.setValue(stopModels);
-            }
-        };
-
-        this.dataRepository.getSavedStopsData().observeForever(dataObserver);*/
+        updateCachedData();
     }
 
     public void fillsavedStops(ArrayList<String> stops){
@@ -75,12 +59,9 @@ public class DataViewModel extends ViewModel {
         return dataRepository.getStopInfo(code);
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-
-        //As we set observeForever at onCreate(), we need to cancel the subscription when we exit the app
-        //this.dataRepository.getSavedStopsData().removeObserver(dataObserver);
+    public void updateCachedData(){
+        Log.d(TAG, "updateCachedData: called");
+        this.savedStops = dataRepository.getSavedStops().getValue();
     }
 
     public void initLoop(){
@@ -93,7 +74,7 @@ public class DataViewModel extends ViewModel {
 
 
     public ArrayList<StopModelView> getSavedStops() {
-        return savedStops;
+        return this.savedStops;
     }
 
     public void setSavedStops(ArrayList<StopModelView> savedStops) {

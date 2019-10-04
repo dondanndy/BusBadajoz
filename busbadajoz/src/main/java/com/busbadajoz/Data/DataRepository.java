@@ -103,7 +103,7 @@ public class DataRepository {
     for (String stop_test : list) {
         StopMapModel stop_model = this.stops_map.get(stop_test);
 
-        StopModelView stop = new StopModelView(stop_model.getStopName(), 33);
+        StopModelView stop = new StopModelView(stop_model.getStopName(), 33, (int) (Math.random() * 10), " minutos");
         stop.setName(stop_model.getStopName());
 
         ArrayList<BusModelView> buses = new ArrayList<>();
