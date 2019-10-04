@@ -94,7 +94,7 @@
             android:layout_marginStart="2dp"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/lato"
-            android:text=""
+            android:text="@string/update_p2"
             android:textColor="@color/text_color_secondary"
             android:textSize="15sp" />
     </LinearLayout>

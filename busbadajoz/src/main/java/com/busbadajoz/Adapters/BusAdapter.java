@@ -88,6 +88,13 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         holder.timeLeft.setText(String.valueOf(this.buses.get(position).getTimeLeft()));
         holder.unitsTimeLeft.setText(this.buses.get(position).getUnitTimeLeft());
 
+        //Remove the placeholder if the data is available.
+        if (!holder.timeLeft.getText().equals("-1")) {
+            holder.loadingView.setVisibility(View.GONE);
+            holder.bus.setVisibility(View.VISIBLE);
+            holder.showingData = true;
+        }
+
         holder.bus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,6 +147,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                 }
             }
 
+            //Remove the placeholder if the data is available.
             if (!holder.timeLeft.getText().equals("-1")) {
                 holder.loadingView.setVisibility(View.GONE);
                 holder.bus.setVisibility(View.VISIBLE);

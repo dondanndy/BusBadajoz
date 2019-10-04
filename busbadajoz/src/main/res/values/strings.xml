@@ -18,6 +18,9 @@
     <string name="app_title">Cercanas</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="update_p1">Actualizado hace </string>
+    <string name="update_p2"> </string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Apariencia</string>
     <string name="sync_header">Acerca de</string>
@@ -36,6 +39,6 @@
     <string name="direction">Dirección</string>
     <string name="estimate">Distancia</string>
     <string name="settings_title">Ajustes</string>
-    <string name="update_p1">Actualizado hace </string>
+
 
 </resources>

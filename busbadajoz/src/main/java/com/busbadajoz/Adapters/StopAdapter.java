@@ -169,7 +169,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             Bundle o = (Bundle) payloads.get(0);
             for (String key : o.keySet()) {
                 if (key.equals("DISTANCE")) {
-                    holder.distance.setText(String.valueOf((int) o.get(key)));
+                    holder.distance.setText(String.valueOf((int) o.get(key)) + " km");
                 }
 
                 if (key.equals("UPDATE_TIME")) {
