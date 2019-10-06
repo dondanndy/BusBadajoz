@@ -103,13 +103,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
                 if (bus_selected == position){
                     bus_selected = -1;
-                    notifyItemChanged(position);
+                    notifyItemChanged(position, false);
                 } else {
-                    bus_tapped = bus_selected;
+                    notifyItemChanged(bus_selected, false);
+                    notifyItemChanged(position, true);
 
                     bus_selected = position;
-                    notifyItemChanged(position);
-                    notifyItemChanged(bus_tapped);
                 }
             }
         });
@@ -123,9 +122,17 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(final BusViewHolder holder, final int position, List<Object> payloads) {
+    public void onBindViewHolder(BusViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()){
             onBindViewHolder(holder, position);
+        } else if (payloads.get(0) instanceof Boolean){
+            Log.d(TAG, "onBindViewHolder: Entered bool if");
+            Log.d(TAG, "onBindViewHolder: bus_selected is " + bus_selected);
+            if ((Boolean) payloads.get(0)){
+                holder.bottomTriangle.setVisibility(View.VISIBLE);
+            } else {
+                holder.bottomTriangle.setVisibility(View.INVISIBLE);
+            }
         } else {
             Bundle o = (Bundle) payloads.get(0);
             for (String key : o.keySet()) {
@@ -180,13 +187,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     }
 
     public void updateData(ArrayList<BusModelView> newData){
-        Log.d(TAG, "updateData: new Data = " + newData);
-        Log.d(TAG, "updateData: old Data = " + this.buses);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
                 new BusDiffUtilCallback(this.buses, newData));
         diffResult.dispatchUpdatesTo(this);
 
-        Log.d(TAG, "updateData (Bus): Finished update");
         this.buses = newData;
     }
 
