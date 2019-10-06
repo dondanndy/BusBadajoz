@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 
 public class DataRepository {
     /*
@@ -108,11 +110,26 @@ public class DataRepository {
 
         ArrayList<BusModelView> buses = new ArrayList<>();
         for (String[] bus : stop_model.getStopBuses()) {
-            buses.add(new BusModelView("Línea " + bus[0],
-                    (int) (Math.random() * 10) + 5,
-                    "min",
-                    3250,
-                    "m"));
+
+            BusModelView tmp = new BusModelView("Línea " + bus[0],
+                    (int) (Math.random() * 12),
+                    ((int) (Math.random() * 13) % 2 == 0) ? "minutos": "minuto",
+                    String.format("%.2f",(Math.random() * 100)),
+                    ((int) (Math.random() * 13) % 2 == 0) ? "metros": "kilom.");
+            tmp.setNextStop(new String[]{bus[1], stops_map.get(bus[1]).getStopName()});
+
+            //A lot of temp variables, I know.
+            String[] dir = new String[2];
+            if (bus[2].equals("1")){
+                dir[0] = appData.getFirstStops().get(bus[0])[1];
+            } else {
+                dir[0] = appData.getFirstStops().get(bus[0])[0];
+            }
+            dir[1] = stops_map.get(dir[0]).getStopName();
+
+            tmp.setDirection(dir);
+
+            buses.add(tmp);
         }
 
         stop.setBuses(buses);

@@ -16,21 +16,25 @@ import java.util.HashMap;
  */
 
 public class AppData {
-    private HashMap<String, String[]> first_stops = new HashMap<>();
+    private HashMap<String, String[]> firstStops = new HashMap<>();
 
-    private HashMap<String, StopMapModel> stop_maps;
+    private HashMap<String, StopMapModel> stopMaps;
 
     public AppData(){
-        this.stop_maps = new HashMap<>();
-        fill_first_map(this.first_stops);
-        fill_stops_map(this.stop_maps);
+        this.stopMaps = new HashMap<>();
+        fillFirstMap(this.firstStops);
+        fillStopsMap(this.stopMaps);
     }
 
     public HashMap<String, StopMapModel> getMap(){
-        return this.stop_maps;
+        return this.stopMaps;
     }
 
-    private void fill_first_map(HashMap<String, String[]> map){
+    public HashMap<String, String[]> getFirstStops() {
+        return this.firstStops;
+    }
+
+    private void fillFirstMap(HashMap<String, String[]> map){
         map.put("2", new String[]{"200", "7"});
         map.put("3", new String[]{"143", "71"});
         map.put("4", new String[]{"141", "176"});
@@ -59,7 +63,7 @@ public class AppData {
         map.put("M4", new String[]{"248", "1814"});
     }
 
-    private void fill_stops_map(HashMap<String, StopMapModel> map){
+    private void fillStopsMap(HashMap<String, StopMapModel> map){
         /*
             In this method we fill the map with the data we have obtained previously in the company
             website. Maybe it's not the most efficient way but it's still fast enough even in older

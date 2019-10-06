@@ -17,7 +17,12 @@ public class BusModelView implements Parcelable {
     private int timeLeft;
     private String unitTimeLeft;
 
-    private int distanceLeft;
+    /*
+        The distance left should be a float, but to avoid problems with the parsing to a String (when
+        it's really an int for example) we will pass it as a string and do this parsing manually in
+        the repository.
+     */
+    private String distanceLeft;
     private String unitDistanceLeft;
 
     private String[] nextStop;
@@ -29,14 +34,14 @@ public class BusModelView implements Parcelable {
         this.timeLeft = -1;
         this.unitTimeLeft = "";
 
-        this.distanceLeft = -1;
+        this.distanceLeft = "-1";
         this.unitDistanceLeft = "m";
 
         this.nextStop = new String[2];
         this.direction = new String[2];
     }
 
-    public BusModelView(String line, int timeLeft, String unitTimeLeft, int distanceLeft, String unitDistanceLeft){
+    public BusModelView(String line, int timeLeft, String unitTimeLeft, String distanceLeft, String unitDistanceLeft){
         this.lineName = line;
         this.timeLeft = timeLeft;
         this.unitTimeLeft = unitTimeLeft;
@@ -80,11 +85,11 @@ public class BusModelView implements Parcelable {
         this.timeLeft = timeLeft;
     }
 
-    public int getDistanceLeft() {
+    public String getDistanceLeft() {
         return distanceLeft;
     }
 
-    public void setDistanceLeft(int distanceLeft) {
+    public void setDistanceLeft(String distanceLeft) {
         this.distanceLeft = distanceLeft;
     }
 

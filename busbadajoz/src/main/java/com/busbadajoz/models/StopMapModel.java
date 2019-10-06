@@ -61,7 +61,7 @@ public class StopMapModel{
 
         ArrayList<BusModelView> tmp2 = new ArrayList();
         for (int i=0; i < this.buses.length; i++){
-            tmp2.add(new BusModelView("Línea "+this.buses[i][0], -1, "minutos", -1,"m"));
+            tmp2.add(new BusModelView("Línea "+this.buses[i][0], -1, "minutos", "-1","m"));
         }
         tmp.setBuses(tmp2);
 

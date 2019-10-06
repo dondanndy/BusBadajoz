@@ -58,18 +58,20 @@
                 app:ticker_animationDuration="0"
                 app:ticker_defaultCharacterList="number" />
 
-            <TextView
+            <com.robinhood.ticker.TickerView
                 android:id="@+id/units_time_left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:gravity="center_horizontal"
                 android:fitsSystemWindows="false"
-                android:fontFamily="@font/lato"
-                android:text="-"
+                android:text="min"
                 android:textAlignment="center"
                 android:textColor="@color/text_color"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:ticker_animationDuration="0"
+                app:ticker_defaultCharacterList="alphabet"/>
 
         </LinearLayout>
 

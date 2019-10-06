@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
@@ -36,14 +37,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private int bus_selected;
     private int bus_size;
     private ArrayList<BusModelView> buses;
-    private ArrayList<Boolean> bus_state;
     private Context mContext;
 
     private BusAdapterInterface adapterInterface;
 
     public BusAdapter(ArrayList<BusModelView> buses, int bus_selected,
-                      ArrayList<Boolean> bus_states, int bus_size, Context mContext,
-                      BusAdapterInterface adapterInterface) {
+                      int bus_size, Context mContext, BusAdapterInterface adapterInterface) {
         this.bus_selected = bus_selected;
 
 
@@ -51,7 +50,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         this.bus_size = bus_size;
         this.mContext = mContext;
 
-        this.bus_state = bus_states;
         this.adapterInterface = adapterInterface;
     }
 
@@ -99,8 +97,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         holder.bus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapterInterface.OnItemClicked(position, bus_state);
-
                 if (bus_selected == position){
                     bus_selected = -1;
                     notifyItemChanged(position, false);
@@ -110,6 +106,8 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
                     bus_selected = position;
                 }
+
+                adapterInterface.OnItemClicked(position, bus_selected);
             }
         });
 
@@ -122,12 +120,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(BusViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(@NonNull BusViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()){
             onBindViewHolder(holder, position);
         } else if (payloads.get(0) instanceof Boolean){
-            Log.d(TAG, "onBindViewHolder: Entered bool if");
-            Log.d(TAG, "onBindViewHolder: bus_selected is " + bus_selected);
             if ((Boolean) payloads.get(0)){
                 holder.bottomTriangle.setVisibility(View.VISIBLE);
             } else {
@@ -145,7 +141,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                 if (key.equals("TIME")) {
                     //Update the time
                     if (!holder.timeLeft.getText().equals("-1")){
-                        holder.timeLeft.setAnimationDuration(250);
+                        holder.timeLeft.setAnimationDuration(400);
                     }
                     holder.timeLeft.setText(String.valueOf( (Integer) o.get(key)));
                     holder.timeLeft.setAnimationDuration(0);
@@ -153,7 +149,11 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
                 if (key.equals("TIME_UNITS")) {
                     //Update the time units
+                    if (!holder.timeLeft.getText().equals("-1")){
+                        holder.unitsTimeLeft.setAnimationDuration(400);
+                    }
                     holder.unitsTimeLeft.setText((String) o.get(key));
+                    holder.unitsTimeLeft.setAnimationDuration(0);
                 }
             }
 
@@ -200,7 +200,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
         private TextView lineName;
         private TickerView timeLeft;
-        private TextView unitsTimeLeft;
+        private TickerView unitsTimeLeft;
 
         private ConstraintLayout bottomTriangle;
         private LinearLayout bus;
@@ -230,7 +230,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
        and the state of all of the buses displayed.
      */
     public interface BusAdapterInterface{
-        void OnItemClicked(int item_id, ArrayList<Boolean> bus_states);
+        void OnItemClicked(int item_id, int selected);
     }
 
     /*
