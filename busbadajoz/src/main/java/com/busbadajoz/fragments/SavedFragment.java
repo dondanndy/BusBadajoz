@@ -41,7 +41,8 @@ import java.util.HashMap;
 
 public class SavedFragment extends Fragment {
 
-    /* This fragment is the first of all of them. The user will be able to select several stops as
+    /*
+    This fragment is the first of all of them. The user will be able to select several stops as
     "saved", and always see them quickly when they open the app. This fragment shows them.
      */
 

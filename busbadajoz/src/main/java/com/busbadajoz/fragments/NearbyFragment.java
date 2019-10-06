@@ -46,9 +46,10 @@ public class NearbyFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_nearby, container, false);
 
+        /*
         tickerView = rootView.findViewById(R.id.tickerView);
         tickerView.setCharacterLists(TickerUtils.provideNumberList());
-        //tickerView.setText(String.valueOf(viewModel.getCont()));
+        tickerView.setText(String.valueOf(viewModel.getCont()));
 
         Button test = rootView.findViewById(R.id.test_button);
 
@@ -59,7 +60,7 @@ public class NearbyFragment extends Fragment {
                 tickerView.setText(String.valueOf(newValue));
                 //viewModel.setCont(newValue);
             }
-        });
+        });*/
 
         //ExampleCounter example = new ExampleCounter();
         //example.start();

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.busbadajoz.R;
@@ -136,7 +137,9 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
 
                 if (key.equals("TIME")) {
                     //Update the time
-                    holder.timeLeft.setAnimationDuration(250);
+                    if (!holder.timeLeft.getText().equals("-1")){
+                        holder.timeLeft.setAnimationDuration(250);
+                    }
                     holder.timeLeft.setText(String.valueOf( (Integer) o.get(key)));
                     holder.timeLeft.setAnimationDuration(0);
                 }
@@ -196,9 +199,9 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         private TextView unitsTimeLeft;
 
         private ConstraintLayout bottomTriangle;
-        private ConstraintLayout bus;
+        private LinearLayout bus;
         private ConstraintLayout loadingView;
-        private ConstraintLayout fullView;
+        private LinearLayout fullView;
 
         private Observer<ArrayList<BusModelView>> dataObserver;
 
@@ -211,7 +214,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             this.timeLeft = itemView.findViewById(R.id.time_left);
             this.unitsTimeLeft = itemView.findViewById(R.id.units_time_left);
 
-            this.bus = itemView.findViewById(R.id.bus_border);
+            this.bus = itemView.findViewById(R.id.bus_layout);
             this.loadingView = itemView.findViewById(R.id.loading_view);
             this.fullView = itemView.findViewById(R.id.full_bus_layout);
             this.bottomTriangle = itemView.findViewById(R.id.lower_triangle_layout);
