@@ -7,17 +7,17 @@
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
     app:layout_constraintTop_toTopOf="parent">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bus_border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginRight="2dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         app:cardBackgroundColor="@color/white"
@@ -63,15 +63,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:gravity="center_horizontal"
                 android:fitsSystemWindows="false"
+                android:gravity="fill_horizontal"
                 android:text="min"
                 android:textAlignment="center"
                 android:textColor="@color/text_color"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:ticker_animationDuration="0"
-                app:ticker_defaultCharacterList="alphabet"/>
+                app:ticker_defaultCharacterList="alphabet" />
 
         </LinearLayout>
 

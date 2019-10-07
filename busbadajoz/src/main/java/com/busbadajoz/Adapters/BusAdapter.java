@@ -7,6 +7,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.busbadajoz.R;
 import com.busbadajoz.models.BusModelView;
+import com.google.android.material.card.MaterialCardView;
 import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
@@ -126,8 +128,20 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         } else if (payloads.get(0) instanceof Boolean){
             if ((Boolean) payloads.get(0)){
                 holder.bottomTriangle.setVisibility(View.VISIBLE);
+                Log.d(TAG, "onBindViewHolder: Altura: " + holder.materialCard.getZ());
+                holder.materialCard.animate()
+                        .translationZ(holder.materialCard.getZ() * 4)
+                        .setDuration(350)
+                        .setInterpolator(new FastOutSlowInInterpolator())
+                        .start();
             } else {
                 holder.bottomTriangle.setVisibility(View.INVISIBLE);
+                Log.d(TAG, "onBindViewHolder: Altura: " + holder.materialCard.getZ());
+                holder.materialCard.animate()
+                        .translationZ(0)
+                        .setDuration(350)
+                        .setInterpolator(new FastOutSlowInInterpolator())
+                        .start();
             }
         } else {
             Bundle o = (Bundle) payloads.get(0);
@@ -203,6 +217,8 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         private TickerView unitsTimeLeft;
 
         private ConstraintLayout bottomTriangle;
+        private MaterialCardView materialCard;
+
         private LinearLayout bus;
         private ConstraintLayout loadingView;
         private LinearLayout fullView;
@@ -222,6 +238,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             this.loadingView = itemView.findViewById(R.id.loading_view);
             this.fullView = itemView.findViewById(R.id.full_bus_layout);
             this.bottomTriangle = itemView.findViewById(R.id.lower_triangle_layout);
+            this.materialCard = itemView.findViewById(R.id.bus_border);
         }
 
     }
