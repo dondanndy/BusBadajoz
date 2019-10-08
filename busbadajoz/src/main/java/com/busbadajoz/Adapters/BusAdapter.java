@@ -41,12 +41,16 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
     private ArrayList<BusModelView> buses;
     private Context mContext;
 
+    private int distThreshold;
+
     private BusAdapterInterface adapterInterface;
 
     public BusAdapter(ArrayList<BusModelView> buses, int bus_selected,
                       int bus_size, Context mContext, BusAdapterInterface adapterInterface) {
         this.bus_selected = bus_selected;
 
+        //TODO: Set from prefences.
+        this.distThreshold = 700;
 
         this.buses = buses;
         this.bus_size = bus_size;
@@ -169,6 +173,26 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                     holder.unitsTimeLeft.setText((String) o.get(key));
                     holder.unitsTimeLeft.setAnimationDuration(0);
                 }
+
+                if (key.equals("DISTANCE")) {
+                    //Change warning colors if distance is low enough
+                    if (((String) o.get("DISTANCE_UNITS")).equals("metros")){
+                        //Our locale sets a coma as the decimal separator, but we can't parse with it.
+                        if (Float.parseFloat(((String) o.get(key)).replace(',', '.')) < distThreshold) {
+                            changeColor(holder.materialCard, Color.WHITE, Color.parseColor("#B00020"));
+
+                            changetextColor(holder.lineName, Color.BLACK, Color.WHITE);
+                            changetextColor(holder.timeLeft, Color.BLACK, Color.WHITE);
+                            changetextColor(holder.unitsTimeLeft, Color.BLACK, Color.WHITE);
+                        }
+                    } else {
+                        changeColor(holder.materialCard, Color.parseColor("#B00020"), Color.WHITE);
+
+                        changetextColor(holder.lineName, Color.WHITE, Color.BLACK);
+                        changetextColor(holder.timeLeft, Color.WHITE, Color.BLACK);
+                        changetextColor(holder.unitsTimeLeft, Color.WHITE, Color.BLACK);
+                    }
+                }
             }
 
             //Remove the placeholder if the data is available.
@@ -259,7 +283,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             but we will only use it with text and solid backgrounds, so don't worry.
          */
         ObjectAnimator backgroundColorAnimator = ObjectAnimator.ofObject(object,
-                "color",
+                "cardBackgroundColor",
                 new ArgbEvaluator(),
                 colorInit,
                 colorFinal);

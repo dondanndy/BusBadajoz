@@ -55,6 +55,9 @@ public class BusDiffUtilCallback extends DiffUtil.Callback {
             diffBundle.putString("NAME", newValue.getLineName());
             diffBundle.putInt("TIME", newValue.getTimeLeft());
             diffBundle.putString("TIME_UNITS", newValue.getUnitTimeLeft());
+
+            diffBundle.putString("DISTANCE", newValue.getDistanceLeft());
+            diffBundle.putString("DISTANCE_UNITS", newValue.getUnitDistanceLeft());
         }
         return diffBundle;
     }
