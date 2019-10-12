@@ -6,11 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,24 +17,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.busbadajoz.Adapters.BusDiffUtilCallback;
-import com.busbadajoz.Adapters.StopDiffUtilCallback;
-import com.busbadajoz.Data.AppData;
-import com.busbadajoz.Data.DataRepository;
 import com.busbadajoz.R;
-import com.busbadajoz.models.BusModel;
-import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.DataViewModel;
 import com.busbadajoz.models.DataViewModelFactory;
-import com.busbadajoz.models.StopModel;
+import com.busbadajoz.models.SavedLinesViewModel;
 
 import com.busbadajoz.Adapters.StopAdapter;
-import com.busbadajoz.models.StopMapModel;
+import com.busbadajoz.models.SavedLinesViewModelFactory;
+import com.busbadajoz.models.StopModelState;
 import com.busbadajoz.models.StopModelView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 
 public class SavedFragment extends Fragment {
@@ -48,7 +39,8 @@ public class SavedFragment extends Fragment {
 
 
     private DataViewModel dataModel;
-    private RecyclerView saved_stops_recyclerview;
+    private SavedLinesViewModel savedLinesViewModel;
+    private RecyclerView savedStopsRecyclerview;
 
     private static final String TAG = "SavedFragment";
 
@@ -63,6 +55,7 @@ public class SavedFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         dataModel =  ViewModelProviders.of(getActivity(), new DataViewModelFactory()).get(DataViewModel.class);
+        savedLinesViewModel = ViewModelProviders.of(this, new SavedLinesViewModelFactory(dataModel.getSavedStops().size())).get(SavedLinesViewModel.class);
     }
 
     @Nullable
@@ -71,15 +64,29 @@ public class SavedFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_saved, container, false);
 
-        saved_stops_recyclerview = rootView.findViewById(R.id.saved_recyclerview);
+        savedStopsRecyclerview = rootView.findViewById(R.id.saved_recyclerview);
 
-        saved_stops_recyclerview.setHasFixedSize(true);
+        savedStopsRecyclerview.setHasFixedSize(true);
 
-        saved_stops_recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        savedStopsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        StopAdapter adapter = new StopAdapter(dataModel, getContext(), dataModel.getSavedStops());
-        saved_stops_recyclerview.setAdapter(adapter);
+        StopAdapter adapter = new StopAdapter(dataModel, getContext(), dataModel.getSavedStops(), savedLinesViewModel.getStops());
+        savedStopsRecyclerview.setAdapter(adapter);
 
+        //Save the scroll state when the user stops scrolling.
+        RecyclerView.OnScrollListener mListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    savedLinesViewModel.setRecyclerViewState(savedStopsRecyclerview.getLayoutManager().onSaveInstanceState());
+                }
+            }
+        };
+        savedStopsRecyclerview.addOnScrollListener(mListener);
+
+        //Observe the data from the dataModel, and from the repository.
         this.dataModel.getSavedStopsData().observe(this, new Observer<ArrayList<StopModelView>>() {
             @Override
             public void onChanged(ArrayList<StopModelView> stopModels) {

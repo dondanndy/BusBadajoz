@@ -27,6 +27,7 @@ import com.busbadajoz.R;
 
 import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.DataViewModel;
+import com.busbadajoz.models.StopModelState;
 import com.busbadajoz.models.StopModelView;
 import com.robinhood.ticker.TickerView;
 
@@ -54,23 +55,21 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     private ArrayList<StopModelView> stopsModels;
 
-    private ArrayList<StopModelState> stop_states = new ArrayList<>();
+    private ArrayList<StopModelState> stopStates;
 
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
 
-    public StopAdapter(DataViewModel dataModel, Context mContext, ArrayList<StopModelView> data) {
+    public StopAdapter(DataViewModel dataModel, Context mContext, ArrayList<StopModelView> data, ArrayList<StopModelState> states) {
         this.mContext = mContext;
 
         this.dataModel = dataModel;
 
         this.stopsModels = data;
 
+        this.stopStates = states;
+
         recycledViewPool = new RecyclerView.RecycledViewPool();
-        for (int i = 0; i < dataModel.getSavedStopsList().size(); i++) {
-            this.stop_states.add(new StopModelState(this.dataModel.getStopInfo(this.dataModel.getSavedStopsList().get(i)).getBuses().size()));
-            this.updated.add(false);
-        }
     }
 
     @Override
@@ -105,7 +104,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         BusAdapter.BusAdapterInterface adapterInterface = new BusAdapter.BusAdapterInterface() {
             @Override
             public void OnItemClicked(int item_id, int busSelected) {
-                stop_states.get(position).setScrollState(holder.recyclerView.getLayoutManager().onSaveInstanceState());
+                stopStates.get(position).setScrollState(holder.recyclerView.getLayoutManager().onSaveInstanceState());
 
                 if (busSelected != -1) {
                     holder.nextStop.setText(stopsModels.get(position).getBuses().get(busSelected).getNextStop()[1]);
@@ -116,22 +115,22 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 }
 
                 row_index = position;
-                if (item_id == stop_states.get(position).getBusSelected()){
+                if (item_id == stopStates.get(position).getBusSelected()){
                     collapse(holder.detail);
-                    stop_states.get(position).setBusSelected(-1);
-                    stop_states.get(position).setShowDetail(false);
+                    stopStates.get(position).setBusSelected(-1);
+                    stopStates.get(position).setShowDetail(false);
                 } else {
-                    if(stop_states.get(position).getBusSelected() == -1) {
+                    if(stopStates.get(position).getBusSelected() == -1) {
                         expand(holder.detail);
-                        stop_states.get(position).setShowDetail(true);
+                        stopStates.get(position).setShowDetail(true);
                     }
-                    stop_states.get(position).setBusSelected(item_id);
+                    stopStates.get(position).setBusSelected(item_id);
                 }
             }
         };
 
         //Passing the data to the adapter
-        holder.busAdapter = new BusAdapter(this.stopsModels.get(position).getBuses(), stop_states.get(position).getBusSelected(),
+        holder.busAdapter = new BusAdapter(this.stopsModels.get(position).getBuses(), stopStates.get(position).getBusSelected(),
                 this.dataModel.getStopInfo(this.dataModel.getSavedStopsList().get(position)).getBuses().size(),
                 mContext, adapterInterface);
 
@@ -148,7 +147,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    stop_states.get(position).setScrollState(holder.recyclerView.getLayoutManager().onSaveInstanceState());
+                    stopStates.get(position).setScrollState(holder.recyclerView.getLayoutManager().onSaveInstanceState());
                 }
             }
         };
@@ -156,14 +155,24 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         holder.recyclerView.addOnScrollListener(mListener);
 
         //Restore of the scroll state when the view is recreated.
-        if (stop_states.get(position).getScrollState() != null) {
-            holder.recyclerView.getLayoutManager().onRestoreInstanceState(stop_states.get(position).getScrollState());
+        if (stopStates.get(position).getScrollState() != null) {
+            holder.recyclerView.getLayoutManager().onRestoreInstanceState(stopStates.get(position).getScrollState());
         }
 
-        if (stop_states.get(position).getShowDetail()){
+        if (stopStates.get(position).getShowDetail()){
             holder.detail.setVisibility(View.VISIBLE);
         } else {
             holder.detail.setVisibility(View.GONE);
+        }
+
+        //Restore detailed info when the view is recreated.
+        int busSelected = this.stopStates.get(position).getBusSelected();
+        if (busSelected != -1) {
+            holder.nextStop.setText(stopsModels.get(position).getBuses().get(busSelected).getNextStop()[1]);
+            holder.directionStop.setText(stopsModels.get(position).getBuses().get(busSelected).getDirection()[1]);
+
+            holder.distanceLeft.setText(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft());
+            holder.distanceLeftUnits.setText(stopsModels.get(position).getBuses().get(busSelected).getUnitDistanceLeft());
         }
     }
 
@@ -194,7 +203,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 }
 
                 //Variable for convenience
-                int busSelected = stop_states.get(position).getBusSelected();
+                int busSelected = stopStates.get(position).getBusSelected();
                 if (busSelected != -1){
                     holder.distanceLeft.setAnimationDuration(400);
                     holder.distanceLeft.setText(String.valueOf(((ArrayList<BusModelView>) o.get("BUSES")).get(busSelected).getDistanceLeft()));
@@ -272,55 +281,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             this.nextStop = itemView.findViewById(R.id.next_stop_name);
             this.directionStop = itemView.findViewById(R.id.direction_name);
         }
-    }
-
-    protected class StopModelState {
-
-        /*
-            This is the state of every stop. It includes the state of every of the buses, to change
-            the color of its background.
-
-            Also saves if one of them has been selected and its position, to display a descriptive
-            text below the list.
-
-            And lastly, it saves the LayoutManager state to keep the scrolling state in the buses
-            recyclerview.
-         */
-
-        private int bus_selected;
-        private Parcelable scroll_state;
-        private Boolean showDetail;
-
-        private StopModelState(int bus_number){
-            this.bus_selected = -1;
-            this.scroll_state = null;
-            this.showDetail = false;
-        }
-
-        public int getBusSelected() {
-            return bus_selected;
-        }
-
-        public void setBusSelected(int position) {
-            this.bus_selected = position;
-        }
-
-        public Parcelable getScrollState() {
-            return this.scroll_state;
-        }
-
-        public void setScrollState(Parcelable state) {
-            this.scroll_state = state;
-        }
-
-        public Boolean getShowDetail(){
-            return this.showDetail;
-        }
-
-        public void setShowDetail(Boolean show_detail) {
-            this.showDetail = show_detail;
-        }
-
     }
 
     /*
