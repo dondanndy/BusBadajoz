@@ -117,6 +117,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
             }
         });
 
+        //Change color for warning
+        if (buses.get(position).getUnitDistanceLeft().equals("metros")){
+            //Our locale sets a coma as the decimal separator, but we can't parse with it.
+            if (Float.parseFloat(buses.get(position).getDistanceLeft().replace(',', '.')) < distThreshold) {
+                holder.materialCard.setCardBackgroundColor(Color.parseColor("#B00020"));
+
+                holder.lineName.setTextColor(Color.WHITE);
+                holder.timeLeft.setTextColor(Color.WHITE);
+                holder.unitsTimeLeft.setTextColor(Color.WHITE);
+            }
+        }
+
         // Change only the color of the tapped bus.
         if (bus_selected == position) {
             holder.bottomTriangle.setVisibility(View.VISIBLE);
@@ -132,7 +144,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         } else if (payloads.get(0) instanceof Boolean){
             if ((Boolean) payloads.get(0)){
                 holder.bottomTriangle.setVisibility(View.VISIBLE);
-                Log.d(TAG, "onBindViewHolder: Altura: " + holder.materialCard.getZ());
                 holder.materialCard.animate()
                         .translationZ(holder.materialCard.getZ() * 4)
                         .setDuration(350)
@@ -140,7 +151,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                         .start();
             } else {
                 holder.bottomTriangle.setVisibility(View.INVISIBLE);
-                Log.d(TAG, "onBindViewHolder: Altura: " + holder.materialCard.getZ());
                 holder.materialCard.animate()
                         .translationZ(0)
                         .setDuration(350)
