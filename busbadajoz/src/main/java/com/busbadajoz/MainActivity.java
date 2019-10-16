@@ -1,6 +1,8 @@
 package com.busbadajoz;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.busbadajoz.fragments.SavedFragment;
@@ -10,6 +12,7 @@ import com.busbadajoz.models.StopMapModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        clearLightStatusBar();
 
         /*
         The app is going to have a bottom navigation. The chosen implementation is the FragNav
@@ -129,5 +134,15 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(LinesFragment.newInstance());
 
         return fragments;
+    }
+
+    /*
+        Function to set the icons on the status bar darker when we are in light mode.
+     */
+    private void clearLightStatusBar() {
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO){
+            getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
     }
 }

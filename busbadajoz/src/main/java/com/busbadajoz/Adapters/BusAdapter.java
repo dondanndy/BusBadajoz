@@ -17,6 +17,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,11 +122,11 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         if (buses.get(position).getUnitDistanceLeft().equals("metros")){
             //Our locale sets a coma as the decimal separator, but we can't parse with it.
             if (Float.parseFloat(buses.get(position).getDistanceLeft().replace(',', '.')) < distThreshold) {
-                holder.materialCard.setCardBackgroundColor(Color.parseColor("#B00020"));
+                holder.materialCard.setCardBackgroundColor(mContext.getColor(R.color.error));
 
-                holder.lineName.setTextColor(Color.WHITE);
-                holder.timeLeft.setTextColor(Color.WHITE);
-                holder.unitsTimeLeft.setTextColor(Color.WHITE);
+                holder.lineName.setTextColor(mContext.getColor(R.color.textInverted));
+                holder.timeLeft.setTextColor(mContext.getColor(R.color.textInverted));
+                holder.unitsTimeLeft.setTextColor(mContext.getColor(R.color.textInverted));
             }
         }
 
@@ -189,18 +190,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                     if (((String) o.get("DISTANCE_UNITS")).equals("metros")){
                         //Our locale sets a coma as the decimal separator, but we can't parse with it.
                         if (Float.parseFloat(((String) o.get(key)).replace(',', '.')) < distThreshold) {
-                            changeColor(holder.materialCard, Color.WHITE, Color.parseColor("#B00020"));
+                            changeColor(holder.materialCard, mContext.getColor(R.color.colorPrimary), mContext.getColor(R.color.error));
 
-                            changetextColor(holder.lineName, Color.BLACK, Color.WHITE);
-                            changetextColor(holder.timeLeft, Color.BLACK, Color.WHITE);
-                            changetextColor(holder.unitsTimeLeft, Color.BLACK, Color.WHITE);
+                            changetextColor(holder.lineName, mContext.getColor(R.color.textPrimary), mContext.getColor(R.color.textInverted));
+                            changetextColor(holder.timeLeft, mContext.getColor(R.color.textPrimary), mContext.getColor(R.color.textInverted));
+                            changetextColor(holder.unitsTimeLeft, mContext.getColor(R.color.textPrimary), mContext.getColor(R.color.textInverted));
                         }
                     } else {
-                        changeColor(holder.materialCard, Color.parseColor("#B00020"), Color.WHITE);
+                        changeColor(holder.materialCard, mContext.getColor(R.color.error), mContext.getColor(R.color.colorPrimary));
 
-                        changetextColor(holder.lineName, Color.WHITE, Color.BLACK);
-                        changetextColor(holder.timeLeft, Color.WHITE, Color.BLACK);
-                        changetextColor(holder.unitsTimeLeft, Color.WHITE, Color.BLACK);
+                        changetextColor(holder.lineName, mContext.getColor(R.color.textInverted), mContext.getColor(R.color.textPrimary));
+                        changetextColor(holder.timeLeft, mContext.getColor(R.color.textInverted), mContext.getColor(R.color.textPrimary));
+                        changetextColor(holder.unitsTimeLeft, mContext.getColor(R.color.textInverted), mContext.getColor(R.color.textPrimary));
                     }
                 }
             }

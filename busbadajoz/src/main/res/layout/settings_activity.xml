@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/background"
-    android:background="@color/settings_background_light"
+    android:background="?attr/colorSecondary"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +35,7 @@
             android:fontFamily="@font/lato_bold"
             android:text="@string/settings_title"
             android:textSize="24sp"
-            android:textColor="@color/text_color"
+            android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

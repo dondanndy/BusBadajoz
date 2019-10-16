@@ -11,9 +11,12 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.busbadajoz.R;
+import com.busbadajoz.Utils.ThemeUtil;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -116,6 +119,19 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+
+            ListPreference themePreference = findPreference("themePref");
+            if (themePreference != null) {
+                themePreference.setOnPreferenceChangeListener(
+                        new Preference.OnPreferenceChangeListener() {
+                            @Override
+                            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                                String themeOption = (String) newValue;
+                                ThemeUtil.applyTheme(themeOption);
+                                return true;
+                            }
+                        });
+            }
         }
     }
 

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
-    <color name="colorPrimaryDark">#D3CDCD</color>
+    <color name="colorSecondary">#D1D1D1</color>
     <color name="colorAccent">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="text_color">#000000</color>
-    <color name="text_color_secondary">#5C5B5B</color>
     <color name="item_not_selected">#696969</color>
     <color name="item_selected">#3B67AA</color>
+    <color name="error">#B00020</color>
 
-    <color name="gray_detail">#9C9B9B</color>
-    <color name="settings_background_light">#D1D1D1</color>
+    <color name="textPrimary">#000000</color>
+    <color name="textInverted">#FFFFFF</color>
 </resources>

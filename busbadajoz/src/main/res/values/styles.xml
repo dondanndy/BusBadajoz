@@ -3,10 +3,11 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorError">@color/error</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <!-- Style for the settings activity. -->

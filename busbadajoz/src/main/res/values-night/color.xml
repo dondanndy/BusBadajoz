@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="error">#CF6699</color>
+    <color name="colorSecondary">#414141</color>
+    <color name="colorPrimary">#121212</color>
+    <color name="colorAccent">#C0C0C0</color>
+
+    <color name="textPrimary">#FFFFFF</color>
+    <color name="textInverted">#000000</color>
+</resources>

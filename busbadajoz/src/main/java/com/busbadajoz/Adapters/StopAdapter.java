@@ -47,11 +47,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
     final private String TAG = "StopAdapter";
 
-    private ArrayList<Boolean> updated = new ArrayList<>();
-
     private DataViewModel dataModel;
-
-    private int row_index = -1;
 
     private ArrayList<StopModelView> stopsModels;
 
@@ -64,9 +60,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
         this.mContext = mContext;
 
         this.dataModel = dataModel;
-
         this.stopsModels = data;
-
         this.stopStates = states;
 
         recycledViewPool = new RecyclerView.RecycledViewPool();
@@ -114,7 +108,6 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                     holder.distanceLeftUnits.setText(stopsModels.get(position).getBuses().get(busSelected).getUnitDistanceLeft());
                 }
 
-                row_index = position;
                 if (item_id == stopStates.get(position).getBusSelected()){
                     collapse(holder.detail);
                     stopStates.get(position).setBusSelected(-1);
@@ -159,13 +152,13 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             holder.recyclerView.getLayoutManager().onRestoreInstanceState(stopStates.get(position).getScrollState());
         }
 
+        //Restore detailed info when the view is recreated.
         if (stopStates.get(position).getShowDetail()){
             holder.detail.setVisibility(View.VISIBLE);
         } else {
             holder.detail.setVisibility(View.GONE);
         }
 
-        //Restore detailed info when the view is recreated.
         int busSelected = this.stopStates.get(position).getBusSelected();
         if (busSelected != -1) {
             holder.nextStop.setText(stopsModels.get(position).getBuses().get(busSelected).getNextStop()[1]);
@@ -178,7 +171,7 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
 
 
     @Override
-    public void onBindViewHolder(final StopViewHolder holder, final int position, List<Object> payloads) {
+    public void onBindViewHolder(@NonNull StopViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()){
             onBindViewHolder(holder, position);
         } else {

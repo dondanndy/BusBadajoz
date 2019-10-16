@@ -5,7 +5,8 @@
     android:id="@+id/stop_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="false">
+    android:animateLayoutChanges="false"
+    android:background="?android:attr/colorBackground">
 
     <TextView
         android:id="@+id/name"
@@ -15,7 +16,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/lato_bold"
         android:text="@string/nombre_parada"
-        android:textColor="@color/text_color"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +39,8 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/lato"
             android:text="33 km"
-            android:textColor="@color/text_color_secondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.6"
             android:textSize="15sp" />
 
         <TextView
@@ -49,7 +51,8 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/lato"
             android:text=" \u00b7 "
-            android:textColor="@color/text_color_secondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.6"
             android:textSize="15sp" />
 
         <TextView
@@ -60,7 +63,8 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/lato"
             android:text="@string/update_p1"
-            android:textColor="@color/text_color_secondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.6"
             android:textSize="15sp" />
 
         <com.robinhood.ticker.TickerView
@@ -70,7 +74,8 @@
             android:layout_marginLeft="2dp"
             android:layout_marginTop="4dp"
             android:text="12"
-            android:textColor="@color/text_color_secondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.6"
             android:textSize="15sp"
             app:ticker_animationDuration="0"
             app:ticker_defaultCharacterList="number" />
@@ -82,7 +87,8 @@
             android:layout_marginLeft="2dp"
             android:layout_marginTop="4dp"
             android:text="minutos"
-            android:textColor="@color/text_color_secondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.6"
             android:textSize="15sp"
             app:ticker_animationDuration="0"
             app:ticker_defaultCharacterList="alphabet" />
@@ -95,7 +101,8 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/lato"
             android:text="@string/update_p2"
-            android:textColor="@color/text_color_secondary"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.6"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -115,10 +122,9 @@
         android:id="@+id/detail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/black"
+        android:background="?attr/colorAccent"
         android:fontFamily="@font/lato_black"
         android:orientation="horizontal"
-        android:textColor="@color/white"
         android:textSize="30sp"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/bus_list">
@@ -141,7 +147,8 @@
                 android:fontFamily="@font/lato"
                 android:text="@string/estimate"
                 android:textAlignment="center"
-                android:textColor="@color/gray_detail"
+                android:textColor="?android:attr/colorBackground"
+                android:alpha="0.5"
                 android:textSize="12sp" />
 
             <com.robinhood.ticker.TickerView
@@ -153,7 +160,7 @@
                 android:gravity="center_horizontal"
                 android:text="99,99"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="?android:attr/colorBackground"
                 android:textSize="24sp"
                 app:ticker_animationDuration="0"
                 app:ticker_defaultCharacterList="number" />
@@ -165,7 +172,7 @@
                 android:gravity="center_horizontal"
                 android:text="m"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="?android:attr/colorBackground"
                 android:textSize="16sp"
                 app:ticker_animationDuration="0"
                 app:ticker_defaultCharacterList="alphabet" />
@@ -186,7 +193,8 @@
                 android:fontFamily="@font/lato"
                 android:padding="3dp"
                 android:text="@string/next_stop"
-                android:textColor="@color/gray_detail"
+                android:textColor="?android:attr/colorBackground"
+                android:alpha="0.5"
                 android:textSize="12sp" />
 
             <TextView
@@ -196,7 +204,7 @@
                 android:fontFamily="@font/lato_bold"
                 android:padding="3dp"
                 android:text="-"
-                android:textColor="@color/white"
+                android:textColor="?android:attr/colorBackground"
                 android:textSize="15sp" />
 
             <TextView
@@ -206,7 +214,8 @@
                 android:fontFamily="@font/lato"
                 android:padding="3dp"
                 android:text="@string/direction"
-                android:textColor="@color/gray_detail"
+                android:textColor="?android:attr/colorBackground"
+                android:alpha="0.5"
                 android:textSize="12sp" />
 
             <TextView
@@ -216,7 +225,7 @@
                 android:fontFamily="@font/lato_bold"
                 android:padding="3dp"
                 android:text="-"
-                android:textColor="@color/white"
+                android:textColor="?android:attr/colorBackground"
                 android:textSize="15sp" />
         </LinearLayout>
 

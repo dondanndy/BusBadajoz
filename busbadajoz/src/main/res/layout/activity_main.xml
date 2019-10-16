@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/white">
+        android:background="?android:attr/colorBackground">
 
         <ImageView
             android:id="@+id/settings_access"
@@ -35,7 +35,7 @@
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
             android:text="@string/app_title"
-            android:textColor="@color/text_color"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,10 +53,10 @@
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:itemBackground="@color/white"
-        app:itemIconTint="@color/nav_color"
-        app:itemTextColor="@color/nav_color"
+        android:background="?android:attr/colorBackground"
+        app:itemBackground="?android:attr/colorBackground"
+        app:itemIconTint="?android:attr/textColorPrimary"
+        app:itemTextColor="?android:attr/textColorPrimary"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_nav_menu" />
 
