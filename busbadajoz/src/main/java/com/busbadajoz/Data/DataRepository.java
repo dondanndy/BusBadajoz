@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.busbadajoz.Network.Stop;
 import com.busbadajoz.Network.WebRequestInterface;
+import com.busbadajoz.Utils.UnitsParser;
 import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.StopModelView;
 import com.busbadajoz.models.StopMapModel;
@@ -175,7 +176,8 @@ public class DataRepository {
 
                 Log.d(TAG, "getDataFromWeb: Stop received");
                 Log.d(TAG, "getDataFromWeb: Stop received, size of lines "+ response.body().lines.size());
-                Log.d(TAG, "getDataFromWeb: Stop received, first line: " + response.body().lines.get(0).lineName + " - Time:" + response.body().lines.get(0).timeLeft);
+                Log.d(TAG, "getDataFromWeb: Stop received, first line: LINEA " + UnitsParser.parseLine(response.body().lines.get(0).lineName));
+                Log.d(TAG, "onResponse:  - Time: " + UnitsParser.parseTime(response.body().lines.get(0).timeLeft).first);
 
             }
 

@@ -38,7 +38,7 @@ public class UnitsParser {
         Matcher matcher = pattern.matcher(rawData);
         int time;
 
-        if (matcher.matches()){
+        if (matcher.find()){
             time = Integer.parseInt(matcher.group());
         } else {
             return new Pair<String, Units>("-1", Units.MINUTE);
@@ -60,7 +60,7 @@ public class UnitsParser {
         Pattern pattern = Pattern.compile("LÍNEA");
         Matcher matcher = pattern.matcher(rawData);
 
-        if (matcher.matches()) {
+        if (matcher.find()) {
             return rawData.split(" ")[1];
         } else {
             //Some lines don't have the name LINEAS in front, I don't know why.
