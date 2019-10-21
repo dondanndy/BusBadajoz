@@ -1,11 +1,11 @@
 package com.busbadajoz.Utils;
 
 public enum Units {
-    METER,
-    KILOMETER,
+    METER, METERS,
+    KILOMETER, KILOMETERS,
 
-    SECOND,
-    MINUTE,
-    HOUR,
-    DAY
+    SECOND, SECONDS,
+    MINUTE, MINUTES,
+    HOUR, HOURS,
+    DAY, DAYS
 }

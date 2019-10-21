@@ -16,9 +16,10 @@ public class UnitsParser {
         int distance = Integer.parseInt(rawData);
 
         if (distance < 1000) {
-            return new Pair<String, Units>(rawData, Units.METER);
+            return new Pair<String, Units>(rawData, Integer.parseInt(rawData) == 1 ? Units.METER : Units.METERS);
         } else {
-            return new Pair<String, Units>(rawData, Units.KILOMETER);
+            float km = Float.parseFloat(rawData) / 1e3f;
+            return new Pair<String, Units>(String.format("%.2f",(km)), Units.KILOMETER);
         }
     }
 
@@ -45,17 +46,11 @@ public class UnitsParser {
 
         //Get the hours from the minutes (just hours).
         if (time < 60) {
-            return new Pair<String, Units>(String.valueOf(time), Units.MINUTE);
+            return new Pair<String, Units>(String.valueOf(time), time == 1 ? Units.MINUTE : Units.MINUTES);
         } else {
-            int hours = 0;
-            while(true){
-                if (time / 60 < 60){
-                    return new Pair<String, Units>(String.valueOf(hours), Units.HOUR);
-                } else {
-                    time /= 60;
-                    hours += 1;
-                }
-            }
+            // If the time left is more that an hour, we omit the minutes.
+            int hours = (Integer) (time / 60);
+            return new Pair<String, Units>(String.valueOf(hours), hours == 1 ? Units.HOUR : Units.HOURS);
         }
     }
 
@@ -68,7 +63,7 @@ public class UnitsParser {
         if (matcher.matches()) {
             return rawData.split(" ")[1];
         } else {
-            //Some lines dont have the name LINEAS in front, I don't know why.
+            //Some lines don't have the name LINEAS in front, I don't know why.
             return rawData;
         }
     }
