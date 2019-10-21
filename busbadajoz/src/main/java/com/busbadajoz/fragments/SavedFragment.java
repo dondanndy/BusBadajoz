@@ -55,7 +55,7 @@ public class SavedFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         dataModel =  ViewModelProviders.of(getActivity(), new DataViewModelFactory()).get(DataViewModel.class);
-        savedLinesViewModel = ViewModelProviders.of(this, new SavedLinesViewModelFactory(dataModel.getSavedStops().size())).get(SavedLinesViewModel.class);
+        savedLinesViewModel = ViewModelProviders.of(getActivity(), new SavedLinesViewModelFactory(dataModel.getSavedStops().size())).get(SavedLinesViewModel.class);
     }
 
     @Nullable

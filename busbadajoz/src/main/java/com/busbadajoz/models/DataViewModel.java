@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.busbadajoz.Data.DataRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -72,8 +73,12 @@ public class DataViewModel extends ViewModel {
         dataRepository.stopLoop();
     }
 
+    public void getDatafromWeb() throws IOException {
+        dataRepository.getDataFromWebAsync("2");
+    }
 
     public ArrayList<StopModelView> getSavedStops() {
+        Log.d(TAG, "getSavedStops: method called");
         return this.savedStops;
     }
 

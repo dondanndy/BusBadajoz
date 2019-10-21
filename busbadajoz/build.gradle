@@ -38,4 +38,11 @@ dependencies {
     implementation 'com.ncapdevi:frag-nav:3.2.0'
     implementation 'me.saket:inboxrecyclerview:2.0.0-beta3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.13'
+    implementation 'com.tickaroo.tikxml:annotation:0.8.13'
+    implementation 'com.tickaroo.tikxml:core:0.8.13'
+
+    annotationProcessor 'com.tickaroo.tikxml:processor:0.8.13'
 }

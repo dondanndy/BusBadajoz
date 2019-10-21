@@ -21,6 +21,21 @@
     <string name="update_p1">Actualizado hace </string>
     <string name="update_p2"> </string>
 
+    <!-- Units -->
+    <string name="meters_unit">metros</string>
+    <string name="kilometers_unit">km</string>
+    <string name="seconds_unit">segundos</string>
+    <string name="minutes_unit">minutos</string>
+    <string name="hours_unit">horas</string>
+    <string name="days_unit">días</string>
+
+    <string name="meter_unit">metro</string>
+    <string name="kilometer_unit">km</string>
+    <string name="second_unit">segundo</string>
+    <string name="minute_unit">minuto</string>
+    <string name="hour_unit">hora</string>
+    <string name="day_unit">día</string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Apariencia</string>
     <string name="sync_header">Acerca de</string>

@@ -6,13 +6,22 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.busbadajoz.Network.Stop;
+import com.busbadajoz.Network.WebRequestInterface;
 import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.StopModelView;
 import com.busbadajoz.models.StopMapModel;
+import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -25,6 +34,9 @@ public class DataRepository {
         In here we have to separate arrays: one of them contains the static info data refering to the
         stops, and the LiveData one will hold the data we will update on the worker thread.
      */
+
+    //private Retrofit retrofit;
+    private WebRequestInterface webRequestInterface;
 
     private AppData appData = new AppData();
     private HashMap<String, StopMapModel> stops_map;
@@ -45,12 +57,25 @@ public class DataRepository {
             tmp.add(this.stops_map.get(item).asStopModelView());
         }
         this.savedStops.setValue(tmp);
+
+        initRetrofit();
     }
 
     public DataRepository(ArrayList<String> stops) {
 
         this.stops_map = this.appData.getMap();
         this.savedStopsList = stops;
+
+        initRetrofit();
+    }
+
+    private void initRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://tubasa.autobus.cloud/tiemposdellegada/")
+                .addConverterFactory(TikXmlConverterFactory.create())
+                .build();
+
+        this.webRequestInterface = retrofit.create(WebRequestInterface.class);
     }
 
     public void setLiveData(){
@@ -62,18 +87,6 @@ public class DataRepository {
         this.savedStops.setValue(tmp);
     }
 
-
-    /*
-    public DataRepository(HashMap<String, StopMapModel> map){
-
-        this.stops_map = map;
-        this.stops_list.addAll(Arrays.asList("2", "84", "229", "240", "110", "100"));
-        ArrayList<StopModel> tmp = new ArrayList<>();
-        for (String item : stops_list){
-            tmp.add(this.stops_map.get(item).asStopModel());
-        }
-        this.uiData.setValue(tmp);
-    }*/
 
     public void stopLoop(){
         Log.d("DATA", "stoploop llamado");
@@ -137,6 +150,53 @@ public class DataRepository {
         }
 
         return paradas_random;
+    }
+
+    public void getDataFromWebAsync(String stopID) throws IOException {
+
+        Log.d(TAG, "getDataFromWebAsync: called");
+        
+        if (stopID == null) {
+            Log.d(TAG, "getDataFromWebAsync: stopID null");
+        }
+
+        Call<Stop> call = this.webRequestInterface.getStop(stopID);
+
+        call.enqueue(new Callback<Stop>() {
+            @Override
+            public void onResponse(Call<Stop> call, Response<Stop> response) {
+
+                Log.d(TAG, "onResponse: called");
+
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Bad code");
+                    return;
+                }
+
+                Log.d(TAG, "getDataFromWeb: Stop received");
+                Log.d(TAG, "getDataFromWeb: Stop received, size of lines "+ response.body().lines.size());
+                Log.d(TAG, "getDataFromWeb: Stop received, first line: " + response.body().lines.get(0).lineName + " - Time:" + response.body().lines.get(0).timeLeft);
+
+            }
+
+            @Override
+            public void onFailure(Call<Stop> call, Throwable t) {
+                Log.d(TAG, "onFailure: failed, " + t.getLocalizedMessage());
+            }
+        });
+
+
+    }
+
+    public void getDataFromWeb(String stopID) throws IOException {
+
+        Call<Stop> call = this.webRequestInterface.getStop(stopID);
+
+        Stop data = call.execute().body();
+
+        Log.d(TAG, "getDataFromWeb: Stop received");
+        Log.d(TAG, "getDataFromWeb: Stop received, size of lines "+ data.lines.size());
+        Log.d(TAG, "getDataFromWeb: Stop received, first line: " + data.lines.get(0).lineName + " - Time:" + data.lines.get(0).timeLeft);
     }
 
     public MutableLiveData<ArrayList<StopModelView>> getSavedStops(){

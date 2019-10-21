@@ -1,6 +1,7 @@
 package com.busbadajoz.models;
 
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
@@ -13,6 +14,7 @@ public class SavedLinesViewModel extends ViewModel {
     private Parcelable recyclerViewState;
 
     public SavedLinesViewModel(int size) {
+        Log.d("FragmentViewModel", "SavedLinesViewModel: Constructor called");
 
         for (int i=0; i < size; i++){
             stops.add(new StopModelState());

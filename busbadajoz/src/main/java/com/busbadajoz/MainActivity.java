@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import com.ncapdevi.fragnav.FragNavController;
 import com.busbadajoz.fragments.LinesFragment;
 import com.busbadajoz.fragments.NearbyFragment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
          */
 
         dataModel = ViewModelProviders.of(this).get(DataViewModel.class);
+
+        try {
+            dataModel.getDatafromWeb();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         List<Fragment> fragments = startInitialFragments();
 
@@ -99,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        dataModel.initLoop();
+        this.dataModel.initLoop();
     }
 
     @Override
@@ -122,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("ACTIVITY", "onPause: called");
         this.dataModel.stopLoop();
     }
 
