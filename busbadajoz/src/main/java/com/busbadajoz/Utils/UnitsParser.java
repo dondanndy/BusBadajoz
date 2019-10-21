@@ -23,7 +23,7 @@ public class UnitsParser {
         }
     }
 
-    public static Pair<String, Units> parseTime(String rawData){
+    public static Pair<Integer, Units> parseTime(String rawData){
         /*
             The data from the web gives us a value of meters. We will evaluate if we need to set it
             to meters or km.
@@ -31,7 +31,7 @@ public class UnitsParser {
 
         if (rawData.equals("Próximo.")){
             //Special case when the bus is very close.
-            return new Pair<String, Units>("1", Units.MINUTE);
+            return new Pair<Integer, Units>(1, Units.MINUTE);
         }
 
         Pattern pattern = Pattern.compile("\\d+");
@@ -41,16 +41,16 @@ public class UnitsParser {
         if (matcher.find()){
             time = Integer.parseInt(matcher.group());
         } else {
-            return new Pair<String, Units>("-1", Units.MINUTE);
+            return new Pair<Integer, Units>(-1, Units.MINUTE);
         }
 
         //Get the hours from the minutes (just hours).
         if (time < 60) {
-            return new Pair<String, Units>(String.valueOf(time), time == 1 ? Units.MINUTE : Units.MINUTES);
+            return new Pair<Integer, Units>(time, time == 1 ? Units.MINUTE : Units.MINUTES);
         } else {
             // If the time left is more that an hour, we omit the minutes.
             int hours = (Integer) (time / 60);
-            return new Pair<String, Units>(String.valueOf(hours), hours == 1 ? Units.HOUR : Units.HOURS);
+            return new Pair<Integer, Units>(hours, hours == 1 ? Units.HOUR : Units.HOURS);
         }
     }
 

@@ -72,8 +72,8 @@ public class StopDiffUtilCallback extends DiffUtil.Callback {
         if (newValue != oldValue) {
             diffBundle.putInt("DISTANCE", newValue.getDistance());
 
-            diffBundle.putInt("UPDATE_TIME", newValue.getUpdateTime());
-            diffBundle.putString("UPDATE_UNITS", newValue.getUpdateTimeUnits());
+            diffBundle.putInt("UPDATE_TIME", newValue.getUpdateTime().first);
+            diffBundle.putSerializable("UPDATE_UNITS", newValue.getUpdateTime().second);
 
             diffBundle.putParcelableArrayList("BUSES", newValue.getBuses());
         }

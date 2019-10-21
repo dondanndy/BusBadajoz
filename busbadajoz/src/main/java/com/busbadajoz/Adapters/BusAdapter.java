@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.busbadajoz.R;
+import com.busbadajoz.Utils.Units;
 import com.busbadajoz.models.BusModelView;
 import com.google.android.material.card.MaterialCardView;
 import com.robinhood.ticker.TickerView;
@@ -91,8 +92,24 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
          */
 
         holder.lineName.setText(this.buses.get(position).getLineName());
-        holder.timeLeft.setText(String.valueOf(this.buses.get(position).getTimeLeft()));
-        holder.unitsTimeLeft.setText(this.buses.get(position).getUnitTimeLeft());
+        holder.timeLeft.setText(String.valueOf(this.buses.get(position).getTimeLeft().first));
+
+        //The time left will never be seconds.
+        switch (this.buses.get(position).getTimeLeft().second) {
+            case MINUTE:
+                holder.unitsTimeLeft.setText(mContext.getString(R.string.minute_unit));
+                break;
+            case MINUTES:
+                holder.unitsTimeLeft.setText(mContext.getString(R.string.minutes_unit));
+                break;
+            case HOUR:
+                holder.unitsTimeLeft.setText(mContext.getString(R.string.hour_unit));
+                break;
+            case HOURS:
+                holder.unitsTimeLeft.setText(mContext.getString(R.string.hours_unit));
+                break;
+        }
+
 
         //Remove the placeholder if the data is available.
         if (!holder.timeLeft.getText().equals("-1")) {
@@ -119,9 +136,9 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
         });
 
         //Change color for warning
-        if (buses.get(position).getUnitDistanceLeft().equals("metros")){
+        if (buses.get(position).getDistanceLeft().second == Units.METERS){
             //Our locale sets a coma as the decimal separator, but we can't parse with it.
-            if (Float.parseFloat(buses.get(position).getDistanceLeft().replace(',', '.')) < distThreshold) {
+            if (Float.parseFloat(buses.get(position).getDistanceLeft().first.replace(',', '.')) < distThreshold) {
                 holder.materialCard.setCardBackgroundColor(mContext.getColor(R.color.error));
 
                 holder.lineName.setTextColor(mContext.getColor(R.color.textInverted));
@@ -181,13 +198,28 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder>{
                     if (!holder.timeLeft.getText().equals("-1")){
                         holder.unitsTimeLeft.setAnimationDuration(400);
                     }
-                    holder.unitsTimeLeft.setText((String) o.get(key));
+
+                    switch((Units) o.get(key)){
+                        case SECOND:
+                            holder.unitsTimeLeft.setText(mContext.getString(R.string.second_unit));
+                            break;
+                        case SECONDS:
+                            holder.unitsTimeLeft.setText(mContext.getString(R.string.seconds_unit));
+                            break;
+                        case MINUTE:
+                            holder.unitsTimeLeft.setText(mContext.getString(R.string.minute_unit));
+                            break;
+                        case MINUTES:
+                            holder.unitsTimeLeft.setText(mContext.getString(R.string.minutes_unit));
+                            break;
+                    }
+
                     holder.unitsTimeLeft.setAnimationDuration(0);
                 }
 
                 if (key.equals("DISTANCE")) {
                     //Change warning colors if distance is low enough
-                    if (((String) o.get("DISTANCE_UNITS")).equals("metros")){
+                    if (((Units) o.get("DISTANCE_UNITS")) == Units.METER || ((Units) o.get("DISTANCE_UNITS")) == Units.METERS){
                         //Our locale sets a coma as the decimal separator, but we can't parse with it.
                         if (Float.parseFloat(((String) o.get(key)).replace(',', '.')) < distThreshold) {
                             changeColor(holder.materialCard, mContext.getColor(R.color.colorPrimary), mContext.getColor(R.color.error));

@@ -3,11 +3,13 @@ package com.busbadajoz.Data;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.busbadajoz.Network.Stop;
 import com.busbadajoz.Network.WebRequestInterface;
+import com.busbadajoz.Utils.Units;
 import com.busbadajoz.Utils.UnitsParser;
 import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.StopModelView;
@@ -119,17 +121,16 @@ public class DataRepository {
     for (String stop_test : list) {
         StopMapModel stop_model = this.stops_map.get(stop_test);
 
-        StopModelView stop = new StopModelView(stop_model.getStopName(), 33, (int) (Math.random() * 10), " minutos");
+        StopModelView stop = new StopModelView(stop_model.getStopName(), 33, new Pair<Integer, Units>((int) (Math.random() * 10), Units.SECONDS));
         stop.setName(stop_model.getStopName());
 
         ArrayList<BusModelView> buses = new ArrayList<>();
         for (String[] bus : stop_model.getStopBuses()) {
 
             BusModelView tmp = new BusModelView("Línea " + bus[0],
-                    (int) (Math.random() * 12),
-                    ((int) (Math.random() * 13) % 2 == 0) ? "minutos": "minuto",
-                    String.format("%.2f",(Math.random() * 100)),
-                    ((int) (Math.random() * 13) % 2 == 0) ? "metros": "kilom.");
+                    new Pair<Integer, Units>((int) (Math.random() * 12), ((int) (Math.random() * 13) % 2 == 0) ? Units.MINUTE : Units.MINUTES),
+                    new Pair<String, Units>(String.format("%.2f",(Math.random() * 100)), ((int) (Math.random() * 13) % 2 == 0) ? Units.METERS : Units.KILOMETER));
+
             tmp.setNextStop(new String[]{bus[1], stops_map.get(bus[1]).getStopName()});
 
             //A lot of temp variables, I know.

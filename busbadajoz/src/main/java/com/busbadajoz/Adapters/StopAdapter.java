@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import com.busbadajoz.R;
 
+import com.busbadajoz.Utils.Units;
 import com.busbadajoz.models.BusModelView;
 import com.busbadajoz.models.DataViewModel;
 import com.busbadajoz.models.StopModelState;
@@ -104,8 +106,20 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                     holder.nextStop.setText(stopsModels.get(position).getBuses().get(busSelected).getNextStop()[1]);
                     holder.directionStop.setText(stopsModels.get(position).getBuses().get(busSelected).getDirection()[1]);
 
-                    holder.distanceLeft.setText(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft());
-                    holder.distanceLeftUnits.setText(stopsModels.get(position).getBuses().get(busSelected).getUnitDistanceLeft());
+                    holder.distanceLeft.setText(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft().first);
+
+                    switch(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft().second){
+                        case METER:
+                            holder.distanceLeftUnits.setText(mContext.getString(R.string.meter_unit));
+                            break;
+                        case METERS:
+                            holder.distanceLeftUnits.setText(mContext.getString(R.string.meters_unit));
+                            break;
+                        case KILOMETER:
+                            holder.distanceLeftUnits.setText(mContext.getString(R.string.kilometer_unit));
+                            break;
+                    }
+
                 }
 
                 if (item_id == stopStates.get(position).getBusSelected()){
@@ -164,8 +178,19 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
             holder.nextStop.setText(stopsModels.get(position).getBuses().get(busSelected).getNextStop()[1]);
             holder.directionStop.setText(stopsModels.get(position).getBuses().get(busSelected).getDirection()[1]);
 
-            holder.distanceLeft.setText(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft());
-            holder.distanceLeftUnits.setText(stopsModels.get(position).getBuses().get(busSelected).getUnitDistanceLeft());
+            holder.distanceLeft.setText(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft().first);
+
+            switch(stopsModels.get(position).getBuses().get(busSelected).getDistanceLeft().second){
+                case METER:
+                    holder.distanceLeftUnits.setText(mContext.getString(R.string.meter_unit));
+                    break;
+                case METERS:
+                    holder.distanceLeftUnits.setText(mContext.getString(R.string.meters_unit));
+                    break;
+                case KILOMETER:
+                    holder.distanceLeftUnits.setText(mContext.getString(R.string.kilometer_unit));
+                    break;
+            }
         }
     }
 
@@ -191,7 +216,20 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 if (key.equals("UPDATE_UNITS")) {
                     //Update the time units
                     holder.updateTimeUnits.setAnimationDuration(400);
-                    holder.updateTimeUnits.setText((String) o.get(key));
+                    switch((Units) o.get(key)){
+                        case SECOND:
+                            holder.updateTimeUnits.setText(mContext.getString(R.string.second_unit));
+                            break;
+                        case SECONDS:
+                            holder.updateTimeUnits.setText(mContext.getString(R.string.seconds_unit));
+                            break;
+                        case MINUTE:
+                            holder.updateTimeUnits.setText(mContext.getString(R.string.minute_unit));
+                            break;
+                        case MINUTES:
+                            holder.updateTimeUnits.setText(mContext.getString(R.string.minutes_unit));
+                            break;
+                    }
                     holder.updateTimeUnits.setAnimationDuration(0);
                 }
 
@@ -199,11 +237,23 @@ public class StopAdapter extends RecyclerView.Adapter<StopAdapter.StopViewHolder
                 int busSelected = stopStates.get(position).getBusSelected();
                 if (busSelected != -1){
                     holder.distanceLeft.setAnimationDuration(400);
-                    holder.distanceLeft.setText(String.valueOf(((ArrayList<BusModelView>) o.get("BUSES")).get(busSelected).getDistanceLeft()));
+                    holder.distanceLeft.setText(String.valueOf(((ArrayList<BusModelView>) o.get("BUSES")).get(busSelected).getDistanceLeft().first));
                     holder.distanceLeft.setAnimationDuration(0);
 
                     holder.distanceLeftUnits.setAnimationDuration(400);
-                    holder.distanceLeftUnits.setText(String.valueOf(((ArrayList<BusModelView>) o.get("BUSES")).get(busSelected).getUnitDistanceLeft()));
+
+                    switch(((ArrayList<BusModelView>) o.get("BUSES")).get(busSelected).getDistanceLeft().second){
+                        case METER:
+                            holder.distanceLeftUnits.setText(mContext.getString(R.string.meter_unit));
+                            break;
+                        case METERS:
+                            holder.distanceLeftUnits.setText(mContext.getString(R.string.meters_unit));
+                            break;
+                        case KILOMETER:
+                            holder.distanceLeftUnits.setText(mContext.getString(R.string.kilometer_unit));
+                            break;
+                    }
+
                     holder.distanceLeftUnits.setAnimationDuration(0);
                 }
 

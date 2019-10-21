@@ -1,5 +1,8 @@
 package com.busbadajoz.models;
 
+import android.util.Pair;
+
+import com.busbadajoz.Utils.Units;
 import com.busbadajoz.models.BusModel;
 import com.busbadajoz.models.StopModel;
 
@@ -57,11 +60,11 @@ public class StopMapModel{
     }
 
     public StopModelView asStopModelView(){
-        StopModelView tmp =  new StopModelView(this.name, -1, 12, " minutos");
+        StopModelView tmp =  new StopModelView(this.name, -1, new Pair<Integer, Units>(12, Units.MINUTE));
 
         ArrayList<BusModelView> tmp2 = new ArrayList();
         for (int i=0; i < this.buses.length; i++){
-            tmp2.add(new BusModelView("Línea "+this.buses[i][0], -1, "minutos", "-1","m"));
+            tmp2.add(new BusModelView("Línea "+this.buses[i][0], new Pair<Integer, Units>(-1, Units.MINUTE) , new Pair<String, Units>("-1", Units.METER)));
         }
         tmp.setBuses(tmp2);
 

@@ -38,8 +38,7 @@ public class BusDiffUtilCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return (this.newList.get(newItemPosition).getTimeLeft() == this.oldList.get(oldItemPosition).getTimeLeft() &&
-                this.newList.get(newItemPosition).getUnitTimeLeft().equals(this.oldList.get(oldItemPosition).getUnitTimeLeft()));
+        return (this.newList.get(newItemPosition).getTimeLeft().equals(this.oldList.get(oldItemPosition).getTimeLeft()));
     }
 
     @Nullable
@@ -52,12 +51,13 @@ public class BusDiffUtilCallback extends DiffUtil.Callback {
         Bundle diffBundle = new Bundle();
 
         if (newValue != oldValue) {
+            //TODO: Find a way to put the pair on the bundle.
             diffBundle.putString("NAME", newValue.getLineName());
-            diffBundle.putInt("TIME", newValue.getTimeLeft());
-            diffBundle.putString("TIME_UNITS", newValue.getUnitTimeLeft());
+            diffBundle.putInt("TIME", newValue.getTimeLeft().first);
+            diffBundle.putSerializable("TIME_UNITS", newValue.getTimeLeft().second);
 
-            diffBundle.putString("DISTANCE", newValue.getDistanceLeft());
-            diffBundle.putString("DISTANCE_UNITS", newValue.getUnitDistanceLeft());
+            diffBundle.putString("DISTANCE", newValue.getDistanceLeft().first);
+            diffBundle.putSerializable("DISTANCE_UNITS", newValue.getDistanceLeft().second);
         }
         return diffBundle;
     }

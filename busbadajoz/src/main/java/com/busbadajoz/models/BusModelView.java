@@ -2,6 +2,9 @@ package com.busbadajoz.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Pair;
+
+import com.busbadajoz.Utils.Units;
 
 public class BusModelView implements Parcelable {
     /*
@@ -14,16 +17,16 @@ public class BusModelView implements Parcelable {
 
     private String lineName;
 
-    private int timeLeft;
-    private String unitTimeLeft;
+    private Pair<Integer, Units> timeLeft;
 
     /*
         The distance left should be a float, but to avoid problems with the parsing to a String (when
         it's really an int for example) we will pass it as a string and do this parsing manually in
         the repository.
      */
-    private String distanceLeft;
-    private String unitDistanceLeft;
+
+
+    private Pair<String, Units> distanceLeft;
 
     private String[] nextStop;
     private String[] direction;
@@ -31,23 +34,31 @@ public class BusModelView implements Parcelable {
     public BusModelView(){
         //Everything default
         this.lineName = "";
-        this.timeLeft = -1;
-        this.unitTimeLeft = "";
+        this.timeLeft = new Pair<Integer, Units>(-1, Units.MINUTE);
 
-        this.distanceLeft = "-1";
-        this.unitDistanceLeft = "m";
+        this.distanceLeft = new Pair<String, Units>("-1", Units.METER);
 
         this.nextStop = new String[2];
         this.direction = new String[2];
     }
 
-    public BusModelView(String line, int timeLeft, String unitTimeLeft, String distanceLeft, String unitDistanceLeft){
+    public BusModelView(String line, Pair<Integer, Units> timeLeft, Pair<String, Units> distanceLeft){
         this.lineName = line;
+
         this.timeLeft = timeLeft;
-        this.unitTimeLeft = unitTimeLeft;
 
         this.distanceLeft = distanceLeft;
-        this.unitDistanceLeft = unitDistanceLeft;
+
+        this.nextStop = new String[2];
+        this.direction = new String[2];
+    }
+
+    public BusModelView(String line, int timeLeft, Units unitTimeLeft, String distanceLeft, Units unitDistanceLeft){
+        this.lineName = line;
+
+        this.timeLeft = new Pair<Integer, Units>(timeLeft, unitTimeLeft);
+
+        this.distanceLeft = new Pair<String, Units>(distanceLeft, unitDistanceLeft);
 
         this.nextStop = new String[2];
         this.direction = new String[2];
@@ -77,37 +88,22 @@ public class BusModelView implements Parcelable {
         this.lineName = lineName;
     }
 
-    public int getTimeLeft() {
+    public Pair<Integer, Units> getTimeLeft() {
         return timeLeft;
     }
 
-    public void setTimeLeft(int timeLeft) {
+    public void setTimeLeft(Pair<Integer, Units> timeLeft) {
         this.timeLeft = timeLeft;
     }
 
-    public String getDistanceLeft() {
+    public Pair<String, Units> getDistanceLeft() {
         return distanceLeft;
     }
 
-    public void setDistanceLeft(String distanceLeft) {
+    public void setDistanceLeft(Pair<String, Units> distanceLeft) {
         this.distanceLeft = distanceLeft;
     }
 
-    public String getUnitTimeLeft() {
-        return unitTimeLeft;
-    }
-
-    public void setUnitTimeLeft(String unitTimeLeft) {
-        this.unitTimeLeft = unitTimeLeft;
-    }
-
-    public String getUnitDistanceLeft() {
-        return unitDistanceLeft;
-    }
-
-    public void setUnitDistanceLeft(String unitDistanceLeft) {
-        this.unitDistanceLeft = unitDistanceLeft;
-    }
 
     //Parcelable stuff
     protected BusModelView(Parcel in) {
@@ -129,8 +125,7 @@ public class BusModelView implements Parcelable {
 
     private void readFromParcel(Parcel in) {
         this.lineName = in.readString();
-        this.timeLeft = in.readInt();
-        this.unitTimeLeft = in.readString();
+        this.timeLeft = new Pair<Integer, Units>(in.readInt(), (Units) in.readSerializable());
 
     }
     public int describeContents() {
@@ -138,8 +133,11 @@ public class BusModelView implements Parcelable {
     }
 
     public void writeToParcel(Parcel dest, int flags) {
+        /*
+            Ideally we would be able to bundle the pair, but this should work.
+         */
         dest.writeString(this.lineName);
-        dest.writeInt(this.timeLeft);
-        dest.writeString(this.unitTimeLeft);
+        dest.writeInt(this.timeLeft.first);
+        dest.writeSerializable(this.timeLeft.second);
     }
 }
